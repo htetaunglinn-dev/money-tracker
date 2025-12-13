@@ -47,6 +47,61 @@ function FloatingCard({ className, children, delay = 0 }: { className?: string; 
   );
 }
 
+function MiniCalendar() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const monthName = today.toLocaleString('default', { month: 'short' });
+
+  const spendingData: Record<number, number> = {
+    3: 45, 5: 120, 7: 30, 10: 200, 12: 85, 14: 150, 15: 60,
+    17: 90, 19: 180, 21: 40, 23: 110, 25: 70, 27: 95
+  };
+
+  const getIntensity = (day: number) => {
+    const amount = spendingData[day];
+    if (!amount) return '';
+    if (amount < 50) return 'bg-[#5DD62C]/20';
+    if (amount < 100) return 'bg-[#5DD62C]/40';
+    if (amount < 150) return 'bg-[#5DD62C]/60';
+    return 'bg-[#5DD62C]/80';
+  };
+
+  const days = [];
+  for (let i = 0; i < firstDay; i++) {
+    days.push(<div key={`empty-${i}`} className="w-6 h-6" />);
+  }
+  for (let day = 1; day <= daysInMonth; day++) {
+    const isToday = day === today.getDate();
+    days.push(
+      <div
+        key={day}
+        className={`w-6 h-6 flex items-center justify-center text-[10px] rounded-sm transition-colors
+          ${isToday ? 'ring-1 ring-[#5DD62C] text-[#5DD62C] font-bold' : 'text-[#A0A0A0]'}
+          ${getIntensity(day)}`}
+      >
+        {day}
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-xs font-medium text-[#F8F8F8]">{monthName} {year}</span>
+      </div>
+      <div className="grid grid-cols-7 gap-0.5 text-center mb-1">
+        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
+          <div key={i} className="w-6 h-4 text-[9px] text-[#A0A0A0]">{d}</div>
+        ))}
+      </div>
+      <div className="grid grid-cols-7 gap-0.5">{days}</div>
+    </div>
+  );
+}
+
 export default function Home() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -196,26 +251,8 @@ export default function Home() {
                 </FloatingCard>
 
                 <FloatingCard className="absolute top-64 right-8 w-72 animate-float-delay-2" delay={1}>
-                  <div className="text-sm text-[#A0A0A0] mb-3">Spending Overview</div>
-                  <div className="flex items-end space-x-2 h-24">
-                    {[40, 65, 45, 80, 55, 70, 90].map((height, i) => (
-                      <div key={i} className="flex-1 flex flex-col justify-end">
-                        <div
-                          className="bg-gradient-to-t from-[#337418] to-[#5DD62C] rounded-t transition-all duration-500"
-                          style={{ height: `${height}%` }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex justify-between mt-2 text-xs text-[#A0A0A0]">
-                    <span>Mon</span>
-                    <span>Tue</span>
-                    <span>Wed</span>
-                    <span>Thu</span>
-                    <span>Fri</span>
-                    <span>Sat</span>
-                    <span>Sun</span>
-                  </div>
+                  <div className="text-sm text-[#A0A0A0] mb-2">Spending Overview</div>
+                  <MiniCalendar />
                 </FloatingCard>
 
                 <FloatingCard className="absolute bottom-20 left-10 w-48 animate-float" delay={1.5}>
