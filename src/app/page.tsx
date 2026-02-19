@@ -192,7 +192,7 @@ export default function Home() {
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </Link>
-                  <Link href="/auth/signin">
+                  <Link href="/auth/signup">
                     <Button
                       variant="outline"
                       size="lg"

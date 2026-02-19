@@ -10,14 +10,28 @@ export interface User {
   updatedAt: Date
 }
 
+export interface Category {
+  _id?: ObjectId
+  name: string
+  icon: string
+  color: string
+  type: "income" | "expense"
+  userId: ObjectId
+  isDefault: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
 export interface Transaction {
   _id?: ObjectId
   userId: ObjectId
   amount: number
-  category: string
+  categoryId: ObjectId
   description: string
-  date: Date
   type: "income" | "expense"
+  date: Date
+  location?: string
+  tags?: string[]
   createdAt: Date
   updatedAt: Date
 }

@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
+import { auth } from "@/auth"
 import { ObjectId } from "mongodb"
-import clientPromise from "@/lib/mongodb"
-import { Category } from "@/lib/models"
-import { authOptions } from "@/lib/auth"
+import clientPromise from "@/mongodb"
+import { Category } from "@/models"
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    
+    const session = await auth()
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
@@ -19,7 +18,7 @@ export async function GET(request: NextRequest) {
     const client = await clientPromise
     const db = client.db("money_tracker")
 
-    const filter: any = {
+    const filter: Record<string, unknown> = {
       userId: new ObjectId(session.user.id)
     }
 
@@ -45,8 +44,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    
+    const session = await auth()
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
@@ -71,7 +70,6 @@ export async function POST(request: NextRequest) {
     const client = await clientPromise
     const db = client.db("money_tracker")
 
-    // Check if category name already exists for this user
     const existingCategory = await db.collection<Category>("categories").findOne({
       name,
       userId: new ObjectId(session.user.id)
@@ -98,7 +96,7 @@ export async function POST(request: NextRequest) {
     const result = await db.collection("categories").insertOne(category)
 
     return NextResponse.json(
-      { 
+      {
         message: "Category created successfully",
         id: result.insertedId
       },

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signIn, getSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,26 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Eye, EyeOff, Wallet } from "lucide-react";
+
+const LOCAL_USERS_KEY = "mt-local-users";
+
+interface LocalUser {
+  id: string;
+  username: string;
+  email: string;
+  password: string;
+}
+
+function findLocalUser(email: string, password: string): LocalUser | null {
+  try {
+    const users: LocalUser[] = JSON.parse(
+      sessionStorage.getItem(LOCAL_USERS_KEY) ?? "[]"
+    );
+    return users.find((u) => u.email === email && u.password === password) ?? null;
+  } catch {
+    return null;
+  }
+}
 
 export default function SignInPage() {
   const [formData, setFormData] = useState({
@@ -25,10 +45,17 @@ export default function SignInPage() {
     setIsLoading(true);
 
     try {
+      // Check sessionStorage for a locally-created account first
+      const localUser = findLocalUser(formData.email, formData.password);
+      const extraCredentials = localUser
+        ? { username: localUser.username, localUser: "true" }
+        : {};
+
       const result = await signIn("credentials", {
         email: formData.email,
         password: formData.password,
         redirect: false,
+        ...extraCredentials,
       });
 
       if (result?.error) {
@@ -37,7 +64,7 @@ export default function SignInPage() {
         toast.success("Welcome back!");
         router.push("/dashboard");
       }
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong");
     } finally {
       setIsLoading(false);

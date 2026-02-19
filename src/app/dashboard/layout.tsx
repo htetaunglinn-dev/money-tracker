@@ -15,7 +15,6 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (status === "loading") return;
-    
     if (!session) {
       router.push("/auth/signin");
     }
@@ -23,8 +22,11 @@ export default function DashboardLayout({
 
   if (status === "loading") {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-emerald-600"></div>
+      <div className="flex h-screen items-center justify-center bg-money-black">
+        <div className="relative">
+          <div className="animate-spin rounded-full h-12 w-12 border-2 border-money-green border-t-transparent" />
+          <div className="absolute inset-0 animate-ping rounded-full h-12 w-12 border border-money-green opacity-20" />
+        </div>
       </div>
     );
   }
@@ -34,10 +36,14 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="min-h-screen bg-money-black">
       <Navigation />
-      <main className="flex-1 overflow-y-auto">
-        <div className="p-6">
+      {/*
+        Mobile:  pt-14 (top header) + pb-20 (bottom nav + safe area)
+        Desktop: ml-60 (sidebar width), no top/bottom offset needed
+      */}
+      <main className="lg:ml-60 pt-14 pb-20 lg:pt-0 lg:pb-0 min-h-screen">
+        <div className="p-4 lg:p-6">
           {children}
         </div>
       </main>

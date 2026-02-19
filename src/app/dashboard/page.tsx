@@ -1,129 +1,32 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  Wallet, 
+import { getAnalytics, type AnalyticsData } from "@/lib/data";
+import {
+  TrendingUp,
+  TrendingDown,
+  Wallet,
   Plus,
   ArrowUpRight,
-  ArrowDownRight
 } from "lucide-react";
-
-interface AnalyticsData {
-  summary: {
-    totalIncome: number;
-    totalExpense: number;
-    balance: number;
-    period: string;
-  };
-  expensesByCategory: Array<{
-    _id: string;
-    name: string;
-    icon: string;
-    color: string;
-    total: number;
-    count: number;
-  }>;
-  recentTransactions: Array<{
-    _id: string;
-    amount: number;
-    description: string;
-    type: 'income' | 'expense';
-    date: string;
-    category: {
-      name: string;
-      icon: string;
-      color: string;
-    };
-  }>;
-}
 
 export default function DashboardPage() {
   const { data: session } = useSession();
-  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, []);
+  // Lazy initializer — data is read synchronously from sessionStorage.
+  // MIGRATE: replace with useState(null) + useEffect(() => { fetch('/api/analytics')... }, [])
+  const [analyticsData] = useState<AnalyticsData>(() => getAnalytics());
 
-  const fetchAnalytics = async () => {
-    try {
-      const response = await fetch('/api/analytics');
-      if (response.ok) {
-        const data = await response.json();
-        setAnalyticsData(data);
-      }
-    } catch (error) {
-      console.error('Failed to fetch analytics:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-    }).format(new Date(dateString));
-  };
-
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-10 w-32" />
-        </div>
-        
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <Skeleton className="h-4 w-20" />
-                <Skeleton className="h-4 w-4" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-8 w-24" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-        
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <Skeleton className="h-6 w-32" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-48 w-full" />
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <Skeleton className="h-6 w-32" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-48 w-full" />
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+  const formatDate = (dateString: string) =>
+    new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(
+      new Date(dateString)
     );
-  }
 
   return (
     <div className="space-y-6">
@@ -132,7 +35,7 @@ export default function DashboardPage() {
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
           <p className="text-muted-foreground">
-            Welcome back, {session?.user?.name}! Here's your financial overview.
+            Welcome back, {session?.user?.name}! Here&apos;s your financial overview.
           </p>
         </div>
         <Button className="bg-emerald-600 hover:bg-emerald-700">
@@ -150,10 +53,10 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatCurrency(analyticsData?.summary.balance || 0)}
+              {formatCurrency(analyticsData?.summary.balance ?? 0)}
             </div>
             <p className="text-xs text-muted-foreground">
-              Total balance this month
+              {analyticsData?.summary.period ?? "This month"}
             </p>
           </CardContent>
         </Card>
@@ -165,11 +68,9 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {formatCurrency(analyticsData?.summary.totalIncome || 0)}
+              {formatCurrency(analyticsData?.summary.totalIncome ?? 0)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Total income this month
-            </p>
+            <p className="text-xs text-muted-foreground">Total income this month</p>
           </CardContent>
         </Card>
 
@@ -180,11 +81,9 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
-              {formatCurrency(analyticsData?.summary.totalExpense || 0)}
+              {formatCurrency(analyticsData?.summary.totalExpense ?? 0)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Total expenses this month
-            </p>
+            <p className="text-xs text-muted-foreground">Total expenses this month</p>
           </CardContent>
         </Card>
 
@@ -195,11 +94,9 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {analyticsData?.recentTransactions.length || 0}
+              {analyticsData?.recentTransactions.length ?? 0}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Recent transactions
-            </p>
+            <p className="text-xs text-muted-foreground">Recent transactions</p>
           </CardContent>
         </Card>
       </div>
@@ -214,21 +111,15 @@ export default function DashboardPage() {
             <div className="space-y-4">
               {analyticsData?.expensesByCategory.slice(0, 5).map((category) => (
                 <div key={category._id} className="flex items-center space-x-4">
-                  <div 
-                    className="w-4 h-4 rounded-full"
+                  <div
+                    className="w-4 h-4 rounded-full shrink-0"
                     style={{ backgroundColor: category.color }}
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      {category.name}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {category.count} transactions
-                    </p>
+                    <p className="text-sm font-medium truncate">{category.name}</p>
+                    <p className="text-xs text-muted-foreground">{category.count} transactions</p>
                   </div>
-                  <div className="text-sm font-medium">
-                    {formatCurrency(category.total)}
-                  </div>
+                  <div className="text-sm font-medium">{formatCurrency(category.total)}</div>
                 </div>
               ))}
               {!analyticsData?.expensesByCategory.length && (
@@ -249,27 +140,26 @@ export default function DashboardPage() {
             <div className="space-y-4">
               {analyticsData?.recentTransactions.slice(0, 5).map((transaction) => (
                 <div key={transaction._id} className="flex items-center space-x-4">
-                  <div className="flex-shrink-0">
-                    <div 
+                  <div className="shrink-0">
+                    <div
                       className="w-10 h-10 rounded-full flex items-center justify-center"
                       style={{ backgroundColor: `${transaction.category.color}20` }}
                     >
-                      <span className="text-xs">
-                        {transaction.type === 'income' ? '+' : '-'}
+                      <span className="text-xs font-bold">
+                        {transaction.type === "income" ? "+" : "-"}
                       </span>
                     </div>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      {transaction.description}
-                    </p>
+                    <p className="text-sm font-medium truncate">{transaction.description}</p>
                     <p className="text-xs text-muted-foreground">
                       {transaction.category.name} • {formatDate(transaction.date)}
                     </p>
                   </div>
                   <div className="text-sm font-medium">
-                    <span className={transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}>
-                      {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                    <span className={transaction.type === "income" ? "text-green-600" : "text-red-600"}>
+                      {transaction.type === "income" ? "+" : "-"}
+                      {formatCurrency(transaction.amount)}
                     </span>
                   </div>
                 </div>

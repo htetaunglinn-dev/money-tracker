@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
+import { auth } from "@/auth"
 import { ObjectId } from "mongodb"
-import clientPromise from "@/lib/mongodb"
-import { Transaction } from "@/lib/models"
-import { authOptions } from "@/lib/auth"
+import clientPromise from "@/mongodb"
+import { Transaction } from "@/models"
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    
+    const session = await auth()
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
@@ -24,17 +23,17 @@ export async function GET(request: NextRequest) {
     const client = await clientPromise
     const db = client.db("money_tracker")
 
-    // Build filter
-    const filter: any = {
+    const filter: Record<string, unknown> = {
       userId: new ObjectId(session.user.id)
     }
 
     if (type) filter.type = type
     if (categoryId) filter.categoryId = new ObjectId(categoryId)
     if (startDate || endDate) {
-      filter.date = {}
-      if (startDate) filter.date.$gte = new Date(startDate)
-      if (endDate) filter.date.$lte = new Date(endDate)
+      const dateFilter: Record<string, Date> = {}
+      if (startDate) dateFilter.$gte = new Date(startDate)
+      if (endDate) dateFilter.$lte = new Date(endDate)
+      filter.date = dateFilter
     }
 
     const skip = (page - 1) * limit
@@ -69,8 +68,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    
+    const session = await auth()
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
@@ -111,7 +110,7 @@ export async function POST(request: NextRequest) {
     const result = await db.collection("transactions").insertOne(transaction)
 
     return NextResponse.json(
-      { 
+      {
         message: "Transaction created successfully",
         id: result.insertedId
       },

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,23 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Eye, EyeOff, Wallet } from "lucide-react";
+
+interface LocalUser {
+  id: string;
+  username: string;
+  email: string;
+  password: string;
+}
+
+const LOCAL_USERS_KEY = "mt-local-users";
+
+function getLocalUsers(): LocalUser[] {
+  try {
+    return JSON.parse(sessionStorage.getItem(LOCAL_USERS_KEY) ?? "[]");
+  } catch {
+    return [];
+  }
+}
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState({
@@ -37,28 +55,41 @@ export default function SignUpPage() {
       return;
     }
 
+    const existingUsers = getLocalUsers();
+    if (existingUsers.some((u) => u.email === formData.email)) {
+      toast.error("An account with this email already exists");
+      setIsLoading(false);
+      return;
+    }
+
+    // Save user to sessionStorage
+    const newUser: LocalUser = {
+      id: `local-${Date.now()}`,
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+    };
+    sessionStorage.setItem(
+      LOCAL_USERS_KEY,
+      JSON.stringify([...existingUsers, newUser])
+    );
+
     try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-        }),
+      const result = await signIn("credentials", {
+        email: formData.email,
+        password: formData.password,
+        username: formData.username,
+        localUser: "true",
+        redirect: false,
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        toast.success("Account created successfully! Please sign in.");
-        router.push("/auth/signin");
+      if (result?.ok) {
+        toast.success("Account created! Welcome aboard.");
+        router.push("/dashboard");
       } else {
-        toast.error(data.error || "Something went wrong");
+        toast.error("Failed to create session. Please try again.");
       }
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong");
     } finally {
       setIsLoading(false);
@@ -106,7 +137,7 @@ export default function SignUpPage() {
                 required
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <div className="relative">
@@ -150,8 +181,8 @@ export default function SignUpPage() {
               />
             </div>
 
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full"
               disabled={isLoading}
             >
