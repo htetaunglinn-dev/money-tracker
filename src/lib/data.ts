@@ -51,6 +51,9 @@ export interface AnalyticsData {
     totalExpense: number
     balance: number
     period: string
+    safeToSpend: number      // how much can be spent today without breaking monthly budget
+    budgetProgress: number   // 0–1 ratio (expense / income, capped at 1)
+    remainingDays: number    // days left in the current month including today
   }
   expensesByCategory: Array<{
     _id: string
@@ -199,12 +202,23 @@ export function getAnalytics(): AnalyticsData {
     }
   })
 
+  const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+  const remainingDays = Math.max(1, lastDayOfMonth.getDate() - now.getDate() + 1)
+  // No budget store yet (Sprint 5) — fall back to income as the monthly budget
+  const monthlyBudget = totalIncome
+  const remaining = monthlyBudget - totalExpense
+  const safeToSpend = remaining / remainingDays
+  const budgetProgress = totalIncome > 0 ? Math.min(totalExpense / totalIncome, 1) : 0
+
   return {
     summary: {
       totalIncome,
       totalExpense,
       balance: totalIncome - totalExpense,
       period: `${now.toLocaleString("default", { month: "long" })} ${now.getFullYear()}`,
+      safeToSpend,
+      budgetProgress,
+      remainingDays,
     },
     expensesByCategory,
     recentTransactions,

@@ -47,7 +47,7 @@ A personal finance tracker that feels native on mobile. The single killer featur
 ---
 
 ### Sprint 2 — Dashboard Overhaul
-**Status:** `[ ] Pending`
+**Status:** `[x] Complete`
 
 **Goal:** Rebuild the dashboard around the killer features.
 
