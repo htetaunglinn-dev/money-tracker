@@ -2,8 +2,10 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Navigation } from "@/components/layout/navigation";
+import { FAB } from "@/components/FAB";
+import { QuickAddModal } from "@/components/QuickAddModal";
 
 export default function DashboardLayout({
   children,
@@ -12,6 +14,11 @@ export default function DashboardLayout({
 }) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [fabOpen, setFabOpen] = useState(false);
+
+  function handleFABSuccess() {
+    window.dispatchEvent(new Event("mt:transactions-changed"));
+  }
 
   useEffect(() => {
     if (status === "loading") return;
@@ -47,6 +54,14 @@ export default function DashboardLayout({
           {children}
         </div>
       </main>
+
+      {/* Global FAB — visible on all dashboard pages */}
+      <FAB onClick={() => setFabOpen(true)} />
+      <QuickAddModal
+        open={fabOpen}
+        onOpenChange={setFabOpen}
+        onSuccess={handleFABSuccess}
+      />
     </div>
   );
 }

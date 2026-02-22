@@ -62,10 +62,7 @@ export function BudgetRing({ progress, income, expense }: Props) {
       series.slices.template.setAll({
         strokeWidth: 3,
         stroke: am5.color(0x202020),
-        cornerRadiusTL: 6,
-        cornerRadiusTR: 6,
-        cornerRadiusBL: 6,
-        cornerRadiusBR: 6,
+        cornerRadius: 6,
       })
 
       // Disable hover zoom

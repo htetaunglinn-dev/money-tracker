@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { Card, CardContent } from "@/components/ui/card"
 import { getAnalytics } from "@/lib/data"
@@ -20,7 +20,13 @@ const fmtDate = (dateString: string) =>
 export default function DashboardPage() {
   const { data: session } = useSession()
 
-  const [analytics] = useState(() => getAnalytics())
+  const [analytics, setAnalytics] = useState(getAnalytics)
+
+  useEffect(() => {
+    const refresh = () => setAnalytics(getAnalytics())
+    window.addEventListener("mt:transactions-changed", refresh)
+    return () => window.removeEventListener("mt:transactions-changed", refresh)
+  }, [])
   const { summary, expensesByCategory, recentTransactions } = analytics
 
   const barMax = Math.max(summary.totalIncome, summary.totalExpense, 1)

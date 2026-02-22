@@ -79,7 +79,7 @@ Falls back to income-based estimate if no budget is set.
 ---
 
 ### Sprint 3 — Transaction Management
-**Status:** `[ ] Pending`
+**Status:** `[x] Complete`
 
 **Goal:** Full transaction CRUD. Quick-add in ≤ 3 taps.
 
