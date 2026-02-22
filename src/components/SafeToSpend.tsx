@@ -1,15 +1,17 @@
 "use client"
 
+import { cn } from "@/lib/utils"
 import type { AnalyticsData } from "@/lib/data"
 
 interface Props {
   data: AnalyticsData
+  className?: string
 }
 
 const fmt = (n: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Math.max(0, n))
 
-export function SafeToSpend({ data }: Props) {
+export function SafeToSpend({ data, className }: Props) {
   const { safeToSpend, budgetProgress, totalIncome, remainingDays } = data.summary
 
   const isAmber = budgetProgress >= 0.7 && budgetProgress < 0.9
@@ -25,7 +27,7 @@ export function SafeToSpend({ data }: Props) {
       : "You're on track this month"
 
   return (
-    <div className="relative rounded-2xl overflow-hidden border border-white/5">
+    <div className={cn("relative rounded-2xl overflow-hidden border border-white/5", className)}>
       {/* Base */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#1c1c1c] to-[#111111]" />
       {/* Glow blob */}
