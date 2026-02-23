@@ -38,6 +38,7 @@ import {
   Landmark,
   Smartphone,
   PiggyBank,
+  Target,
 } from "lucide-react"
 
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -77,6 +78,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   landmark: Landmark,
   smartphone: Smartphone,
   "piggy-bank": PiggyBank,
+  target: Target,
 }
 
 export function getIcon(name: string): LucideIcon {

@@ -233,9 +233,37 @@ interface Budget {
 
 ## Phase 2 — Smart Layer (Post-Phase 1)
 
-> Planned for 3–6 months post-launch. Sprints to be defined.
+### Sprint 8 — Savings Goals
+**Status:** `[x] Complete`
 
-- **Savings Goals** — Target amount + deadline, visual progress, milestone celebrations
+**Goal:** Track progress toward financial targets with visual rings, deadline countdowns, and milestone celebrations.
+
+| Task | File(s) |
+|---|---|
+| Zustand savings store | `src/store/savingsStore.ts` |
+| Savings Goal card (SVG ring) | `src/components/SavingsGoalCard.tsx` |
+| Add/Edit Goal modal | `src/components/AddGoalModal.tsx` |
+| Contribute modal (quick amounts + milestone toast) | `src/components/ContributeModal.tsx` |
+| Budget page: Budget/Goals tabs | `src/app/dashboard/budget/page.tsx` |
+| Dashboard savings widget (top 2 goals) | `src/app/dashboard/page.tsx` |
+| Add `target` icon to icon system | `src/lib/icons.ts` |
+
+**Definition of Done:**
+- Goals accessible via Goals tab on Budget page (no 5th nav item)
+- SVG ring shows color-coded progress (green → amber → gold)
+- Milestone celebration toast fires when 100% reached
+- Dashboard widget shows top 2 goals by progress
+- Data persists via localStorage (`mt-savings`)
+- Zero ESLint errors, zero TypeScript errors
+
+---
+
+> Remaining Phase 2 features:
+
+- **Bill & Subscription Tracker** — Recurring bills timeline, 3-day-before alerts
+- **Cash Flow Forecast** — Project next 30-day balance from recurring income + bills
+- **Spending Insights** — Biggest spending day, category vs last month nudges
+- **Database migration** — Move Zustand wallet + budget stores to MongoDB
 - **Bill & Subscription Tracker** — Recurring bills timeline, 3-day-before alerts
 - **Cash Flow Forecast** — Project next 30-day balance from recurring income + bills
 - **Spending Insights** — Biggest spending day, category vs last month nudges

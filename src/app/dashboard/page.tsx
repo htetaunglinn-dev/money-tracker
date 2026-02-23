@@ -8,8 +8,10 @@ import { getAnalytics } from "@/lib/data"
 import { SafeToSpend } from "@/components/SafeToSpend"
 import { BudgetRing } from "@/components/BudgetRing"
 import { CategoryProgressBar } from "@/components/CategoryProgressBar"
-import { TrendingUp, TrendingDown, Minus, Wallet, ChevronRight, Sparkles } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, Wallet, ChevronRight, Sparkles, PiggyBank } from "lucide-react"
 import { useWalletStore } from "@/store/walletStore"
+import { useSavingsStore } from "@/store/savingsStore"
+import { DynamicIcon } from "@/lib/icons"
 
 const fmtCurrency = (n: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n)
@@ -42,6 +44,10 @@ export default function DashboardPage() {
 
   const totalWalletBalance = getTotalBalance()
   const walletBalancePositive = totalWalletBalance >= 0
+
+  const goals = useSavingsStore((s) => s.goals)
+  const getTopGoals = useSavingsStore((s) => s.getTopGoals)
+  const topGoals = getTopGoals(2)
 
   return (
     /**
@@ -259,6 +265,76 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* ── Savings Goals Widget ───────────────────────────────────── */}
+      {goals.length > 0 && (
+        <Link href="/dashboard/budget" className="block shrink-0">
+          <div className="rounded-2xl border border-money-green/10 bg-white/5 p-4 space-y-3 hover:border-money-green/20 transition-colors">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <PiggyBank className="h-3.5 w-3.5 text-money-green" />
+                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                  Savings Goals · {goals.length}
+                </p>
+              </div>
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            </div>
+
+            <div className="space-y-2.5">
+              {topGoals.map((goal) => {
+                const ratio =
+                  goal.targetAmount > 0
+                    ? Math.min(goal.currentAmount / goal.targetAmount, 1)
+                    : 0
+                const ringColor =
+                  ratio >= 1
+                    ? "#FFD700"
+                    : ratio >= 0.9
+                      ? "#22c55e"
+                      : ratio >= 0.7
+                        ? "#f59e0b"
+                        : "#5DD62C"
+                return (
+                  <div key={goal.id} className="flex items-center gap-3">
+                    <div
+                      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: `${goal.color}20` }}
+                    >
+                      <DynamicIcon
+                        name={goal.icon}
+                        className="h-4 w-4"
+                        style={{ color: goal.color }}
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-baseline mb-1">
+                        <p className="text-xs font-semibold text-money-light truncate">
+                          {goal.name}
+                        </p>
+                        <span
+                          className="text-[10px] font-bold tabular-nums ml-2 shrink-0"
+                          style={{ color: ringColor }}
+                        >
+                          {Math.round(ratio * 100)}%
+                        </span>
+                      </div>
+                      <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-700"
+                          style={{
+                            width: `${ratio * 100}%`,
+                            backgroundColor: ringColor,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </Link>
+      )}
     </div>
   )
 }
