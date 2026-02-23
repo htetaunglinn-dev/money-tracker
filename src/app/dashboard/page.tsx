@@ -8,7 +8,7 @@ import { getAnalytics } from "@/lib/data"
 import { SafeToSpend } from "@/components/SafeToSpend"
 import { BudgetRing } from "@/components/BudgetRing"
 import { CategoryProgressBar } from "@/components/CategoryProgressBar"
-import { TrendingUp, TrendingDown, Minus, Wallet, ChevronRight } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, Wallet, ChevronRight, Sparkles } from "lucide-react"
 import { useWalletStore } from "@/store/walletStore"
 
 const fmtCurrency = (n: number) =>
@@ -90,6 +90,33 @@ export default function DashboardPage() {
           </div>
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
         </Link>
+      )}
+
+      {/* ── First-time onboarding card ─────────────────────────────── */}
+      {wallets.length === 0 && recentTransactions.length === 0 && (
+        <div className="rounded-2xl border border-money-green/20 bg-money-green/5 p-5 flex flex-col gap-3 shrink-0">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-money-green" />
+            <p className="text-sm font-semibold text-foreground">Welcome to Money Tracker!</p>
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Get started in two steps: add a wallet to track your accounts, then log your first transaction.
+          </p>
+          <div className="flex gap-2">
+            <Link
+              href="/dashboard/wallets"
+              className="flex-1 text-center text-xs font-semibold py-2 rounded-lg bg-money-green text-money-black hover:bg-money-green/90 transition-colors"
+            >
+              Add a wallet
+            </Link>
+            <Link
+              href="/dashboard/transactions"
+              className="flex-1 text-center text-xs font-semibold py-2 rounded-lg border border-money-green/30 text-money-green hover:bg-money-green/10 transition-colors"
+            >
+              Log a transaction
+            </Link>
+          </div>
+        </div>
       )}
 
       {/* ── Row A: Safe to Spend + Monthly Overview (side by side) ── */}

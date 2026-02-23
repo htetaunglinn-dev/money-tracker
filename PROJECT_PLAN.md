@@ -208,7 +208,7 @@ interface Budget {
 ---
 
 ### Sprint 7 — Polish, Dark Mode & Settings
-**Status:** `[ ] Pending`
+**Status:** `[x] Complete`
 
 **Goal:** Production-ready finish. Dark mode, empty states, micro-animations, settings, PWA.
 

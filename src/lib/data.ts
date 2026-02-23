@@ -160,6 +160,16 @@ export function addCategory(category: Omit<StoredCategory, "id">): StoredCategor
   return newCat
 }
 
+export function updateCategory(id: string, updates: Partial<Omit<StoredCategory, "id">>): void {
+  // MIGRATE: return fetch(`/api/categories/${id}`, { method: 'PUT', body: JSON.stringify(updates) })
+  write(KEYS.categories, getCategories().map((c) => (c.id === id ? { ...c, ...updates } : c)))
+}
+
+export function deleteCategory(id: string): void {
+  // MIGRATE: return fetch(`/api/categories/${id}`, { method: 'DELETE' })
+  write(KEYS.categories, getCategories().filter((c) => c.id !== id))
+}
+
 // ─── Transactions ─────────────────────────────────────────────────────────────
 // MIGRATE: replace with fetch('/api/transactions')
 

@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect, useRef } from "react"
 import { cn } from "@/lib/utils"
 import type { AnalyticsData } from "@/lib/data"
 
@@ -13,6 +14,27 @@ const fmt = (n: number) =>
 
 export function SafeToSpend({ data, className }: Props) {
   const { safeToSpend, budgetProgress, totalIncome, remainingDays } = data.summary
+  const [displayed, setDisplayed] = useState(0)
+  const rafRef = useRef<number>(0)
+
+  useEffect(() => {
+    const target = Math.max(0, safeToSpend)
+    const duration = 800
+    const startTime = performance.now()
+
+    function frame(now: number) {
+      const progress = Math.min((now - startTime) / duration, 1)
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setDisplayed(target * eased)
+      if (progress < 1) {
+        rafRef.current = requestAnimationFrame(frame)
+      }
+    }
+
+    rafRef.current = requestAnimationFrame(frame)
+    return () => cancelAnimationFrame(rafRef.current)
+  }, [safeToSpend])
 
   const isAmber = budgetProgress >= 0.7 && budgetProgress < 0.9
   const isRed = budgetProgress >= 0.9
@@ -42,7 +64,7 @@ export function SafeToSpend({ data, className }: Props) {
         </p>
 
         <div className={`text-4xl font-black mt-1.5 tabular-nums tracking-tight ${amountColor}`}>
-          {fmt(safeToSpend)}
+          {fmt(displayed)}
         </div>
 
         {/* Progress bar */}

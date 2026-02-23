@@ -3,6 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -12,6 +13,8 @@ import {
   Settings,
   LogOut,
   Wallet,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 const bottomTabs = [
@@ -30,8 +33,10 @@ const sidebarLinks = [
 export function Navigation() {
   const { data: session } = useSession();
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
 
   const isActive = (href: string) => pathname === href;
+  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
 
   return (
     <>
@@ -47,6 +52,13 @@ export function Navigation() {
           </span>
         </div>
         <div className="flex items-center gap-1">
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full text-[#A0A0A0] hover:text-money-green transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </button>
           <Link
             href="/dashboard/settings"
             className="p-2 rounded-full text-[#A0A0A0] hover:text-money-green transition-colors"
@@ -141,6 +153,13 @@ export function Navigation() {
                 {session?.user?.email}
               </p>
             </div>
+            <button
+              onClick={toggleTheme}
+              className="p-1.5 rounded-lg text-[#A0A0A0] hover:text-money-green hover:bg-money-green/10 transition-colors"
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
               className="p-1.5 rounded-lg text-[#A0A0A0] hover:text-money-green hover:bg-money-green/10 transition-colors"

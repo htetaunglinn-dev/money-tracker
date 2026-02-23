@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react"
 import dynamic from "next/dynamic"
-import { BarChart3, TrendingUp, TrendingDown } from "lucide-react"
+import { BarChart3, TrendingUp, TrendingDown, ReceiptText } from "lucide-react"
 import { getReportsData, type ReportPeriod } from "@/lib/data"
 import { SpendingCalendar } from "@/components/SpendingCalendar"
 
@@ -125,7 +125,15 @@ export default function ReportsPage() {
           Income vs Expense
           <span className="text-[10px] font-normal text-muted-foreground ml-1.5">(6 months)</span>
         </h2>
-        <TrendLineChart data={data.monthlyTrend} currency={currency} />
+        {data.monthlyTrend.some((m) => m.income > 0 || m.expense > 0) ? (
+          <TrendLineChart data={data.monthlyTrend} currency={currency} />
+        ) : (
+          <div className="flex flex-col items-center justify-center py-8 gap-2 text-center">
+            <ReceiptText className="h-8 w-8 text-muted-foreground opacity-40" />
+            <p className="text-sm text-muted-foreground">No trend data yet</p>
+            <p className="text-xs text-muted-foreground opacity-60">Add income or expense transactions to see your 6-month trend</p>
+          </div>
+        )}
       </div>
 
       {/* Calendar heatmap */}
@@ -134,11 +142,19 @@ export default function ReportsPage() {
           Daily Spending —{" "}
           {now.toLocaleString("default", { month: "long", year: "numeric" })}
         </h2>
-        <SpendingCalendar
-          data={data.calendarData}
-          year={now.getFullYear()}
-          month={now.getMonth()}
-        />
+        {data.calendarData.length > 0 ? (
+          <SpendingCalendar
+            data={data.calendarData}
+            year={now.getFullYear()}
+            month={now.getMonth()}
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center py-8 gap-2 text-center">
+            <ReceiptText className="h-8 w-8 text-muted-foreground opacity-40" />
+            <p className="text-sm text-muted-foreground">No spending this month</p>
+            <p className="text-xs text-muted-foreground opacity-60">Expense transactions will appear here as a daily heatmap</p>
+          </div>
+        )}
       </div>
     </div>
   )

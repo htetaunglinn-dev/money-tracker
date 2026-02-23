@@ -52,8 +52,8 @@ export function TrendLineChart({ data, currency = "$" }: TrendLineChartProps) {
             fontSize: "12px",
           }}
           labelStyle={{ color: "#fff", marginBottom: "4px" }}
-          formatter={(value: number) => [
-            `${currency}${value.toLocaleString(undefined, { maximumFractionDigits: 0 })}`,
+          formatter={(value: number | undefined) => [
+            `${currency}${(value ?? 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}`,
           ]}
         />
         <Legend
