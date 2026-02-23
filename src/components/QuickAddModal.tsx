@@ -29,6 +29,7 @@ import {
 } from "@/lib/data"
 import { getIcon } from "@/lib/icons"
 import { cn } from "@/lib/utils"
+import { useWalletStore } from "@/store/walletStore"
 
 const schema = z.object({
   type: z.enum(["income", "expense"]),
@@ -39,6 +40,7 @@ const schema = z.object({
   categoryId: z.string().min(1, "Select a category"),
   description: z.string().min(1, "Description is required"),
   date: z.string().min(1, "Date is required"),
+  walletId: z.string().optional(),
 })
 
 type FormValues = z.infer<typeof schema>
@@ -57,6 +59,7 @@ export function QuickAddModal({
   onSuccess,
 }: QuickAddModalProps) {
   const categories = getCategories()
+  const wallets = useWalletStore((s) => s.wallets)
   const isEditing = !!editTransaction
 
   const form = useForm<FormValues>({
@@ -67,6 +70,7 @@ export function QuickAddModal({
       categoryId: "",
       description: "",
       date: new Date().toISOString().split("T")[0],
+      walletId: undefined,
     },
   })
 
@@ -82,6 +86,7 @@ export function QuickAddModal({
         categoryId: editTransaction.categoryId,
         description: editTransaction.description,
         date: editTransaction.date.split("T")[0],
+        walletId: editTransaction.walletId,
       })
     } else {
       form.reset({
@@ -90,6 +95,7 @@ export function QuickAddModal({
         categoryId: "",
         description: "",
         date: new Date().toISOString().split("T")[0],
+        walletId: undefined,
       })
     }
   }, [open, editTransaction, form])
@@ -101,6 +107,7 @@ export function QuickAddModal({
       categoryId: values.categoryId,
       description: values.description,
       date: new Date(values.date).toISOString(),
+      walletId: values.walletId,
     }
 
     if (isEditing && editTransaction) {
@@ -276,6 +283,54 @@ export function QuickAddModal({
                 </FormItem>
               )}
             />
+
+            {/* Wallet (optional) */}
+            {wallets.length > 0 && (
+              <FormField
+                control={form.control}
+                name="walletId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-muted-foreground text-xs uppercase tracking-wider">
+                      Wallet <span className="normal-case text-[10px]">(optional)</span>
+                    </FormLabel>
+                    <div className="flex flex-wrap gap-2">
+                      {wallets.map((w) => {
+                        const Icon = getIcon(w.icon)
+                        const isSelected = field.value === w.id
+                        return (
+                          <button
+                            key={w.id}
+                            type="button"
+                            onClick={() =>
+                              field.onChange(isSelected ? undefined : w.id)
+                            }
+                            className={cn(
+                              "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs transition-all border",
+                              isSelected
+                                ? "border-current"
+                                : "border-transparent text-muted-foreground hover:bg-white/5"
+                            )}
+                            style={
+                              isSelected
+                                ? {
+                                    backgroundColor: `${w.color}20`,
+                                    borderColor: w.color,
+                                    color: w.color,
+                                  }
+                                : {}
+                            }
+                          >
+                            <Icon className="h-3.5 w-3.5" />
+                            <span>{w.name}</span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </FormItem>
+                )}
+              />
+            )}
 
             <Button
               type="submit"

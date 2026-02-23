@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
+import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { getAnalytics } from "@/lib/data"
 import { SafeToSpend } from "@/components/SafeToSpend"
 import { BudgetRing } from "@/components/BudgetRing"
 import { CategoryProgressBar } from "@/components/CategoryProgressBar"
-import { TrendingUp, TrendingDown, Minus } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, Wallet, ChevronRight } from "lucide-react"
+import { useWalletStore } from "@/store/walletStore"
 
 const fmtCurrency = (n: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n)
@@ -19,6 +21,8 @@ const fmtDate = (dateString: string) =>
 
 export default function DashboardPage() {
   const { data: session } = useSession()
+  const wallets = useWalletStore((s) => s.wallets)
+  const getTotalBalance = useWalletStore((s) => s.getTotalBalance)
 
   const [analytics, setAnalytics] = useState(getAnalytics)
 
@@ -35,6 +39,9 @@ export default function DashboardPage() {
 
   const firstName = session?.user?.name?.split(" ")[0] ?? "there"
   const balancePositive = summary.balance >= 0
+
+  const totalWalletBalance = getTotalBalance()
+  const walletBalancePositive = totalWalletBalance >= 0
 
   return (
     /**
@@ -61,6 +68,29 @@ export default function DashboardPage() {
           {balancePositive ? "+" : ""}{fmtCurrency(summary.balance)}
         </div>
       </div>
+
+      {/* ── Wallet Balance Banner ──────────────────────────────────── */}
+      {wallets.length > 0 && (
+        <Link
+          href="/dashboard/wallets"
+          className="flex items-center justify-between px-4 py-3 rounded-2xl border border-money-green/10 bg-money-green/5 hover:bg-money-green/10 transition-colors shrink-0"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-money-green/10 border border-money-green/20 flex items-center justify-center shrink-0">
+              <Wallet className="h-4.5 w-4.5 text-money-green" />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                Wallets · {wallets.length} {wallets.length === 1 ? "account" : "accounts"}
+              </p>
+              <p className={`text-base font-bold tabular-nums ${walletBalancePositive ? "text-foreground" : "text-red-400"}`}>
+                {fmtCurrency(totalWalletBalance)}
+              </p>
+            </div>
+          </div>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </Link>
+      )}
 
       {/* ── Row A: Safe to Spend + Monthly Overview (side by side) ── */}
       <div className="flex flex-col gap-4 lg:flex-row lg:shrink-0">

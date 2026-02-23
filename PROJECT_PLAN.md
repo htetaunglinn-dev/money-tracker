@@ -103,7 +103,7 @@ Falls back to income-based estimate if no budget is set.
 ---
 
 ### Sprint 4 — Wallets / Accounts
-**Status:** `[ ] Pending`
+**Status:** `[x] Complete`
 
 **Goal:** Multiple wallets with manual balance input and transfers.
 

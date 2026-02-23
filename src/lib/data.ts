@@ -41,6 +41,7 @@ export interface StoredTransaction {
   type: "income" | "expense"
   categoryId: string
   date: string // ISO string
+  walletId?: string
   location?: string
   tags?: string[]
 }

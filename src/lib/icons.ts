@@ -1,3 +1,4 @@
+import React from "react"
 import type { LucideIcon } from "lucide-react"
 import {
   Utensils,
@@ -32,6 +33,11 @@ import {
   GraduationCap,
   Pill,
   Dumbbell,
+  Wallet,
+  CreditCard,
+  Landmark,
+  Smartphone,
+  PiggyBank,
 } from "lucide-react"
 
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -66,8 +72,24 @@ const ICON_MAP: Record<string, LucideIcon> = {
   "graduation-cap": GraduationCap,
   pill: Pill,
   dumbbell: Dumbbell,
+  wallet: Wallet,
+  "credit-card": CreditCard,
+  landmark: Landmark,
+  smartphone: Smartphone,
+  "piggy-bank": PiggyBank,
 }
 
 export function getIcon(name: string): LucideIcon {
   return ICON_MAP[name] ?? Circle
+}
+
+/**
+ * Renders a Lucide icon by name without creating a component during render.
+ * Use this instead of `const Icon = getIcon(name); <Icon />` inside components.
+ */
+export function DynamicIcon({
+  name,
+  ...props
+}: { name: string } & React.ComponentPropsWithoutRef<"svg">): React.ReactElement {
+  return React.createElement(getIcon(name), props)
 }

@@ -23,6 +23,7 @@ const bottomTabs = [
 
 const sidebarLinks = [
   ...bottomTabs,
+  { name: "Wallets", href: "/dashboard/wallets", icon: Wallet },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
