@@ -25,11 +25,13 @@ import {
   addTransaction,
   updateTransaction,
   getCategories,
+  getAnalytics,
   type StoredTransaction,
 } from "@/lib/data"
 import { getIcon } from "@/lib/icons"
 import { cn } from "@/lib/utils"
 import { useWalletStore } from "@/store/walletStore"
+import { useBudgetStore } from "@/store/budgetStore"
 
 const schema = z.object({
   type: z.enum(["income", "expense"]),
@@ -60,6 +62,7 @@ export function QuickAddModal({
 }: QuickAddModalProps) {
   const categories = getCategories()
   const wallets = useWalletStore((s) => s.wallets)
+  const getBudgetByCategoryId = useBudgetStore((s) => s.getBudgetByCategoryId)
   const isEditing = !!editTransaction
 
   const form = useForm<FormValues>({
@@ -116,6 +119,25 @@ export function QuickAddModal({
     } else {
       addTransaction(payload)
       toast.success("Transaction added")
+
+      // Check for overspend if this is an expense with a budget
+      if (payload.type === "expense") {
+        const budget = getBudgetByCategoryId(payload.categoryId)
+        if (budget) {
+          const analytics = getAnalytics()
+          const spent =
+            analytics.expensesByCategory.find((c) => c._id === payload.categoryId)
+              ?.total ?? 0
+          if (spent > budget.amount) {
+            const overage = (spent - budget.amount).toFixed(2)
+            const cat = categories.find((c) => c.id === payload.categoryId)
+            toast.warning(
+              `Over budget on ${cat?.name ?? "this category"} by $${overage}`,
+              { duration: 5000 }
+            )
+          }
+        }
+      }
     }
 
     onOpenChange(false)

@@ -143,7 +143,7 @@ interface Wallet {
 ---
 
 ### Sprint 5 — Budget Planner
-**Status:** `[ ] Pending`
+**Status:** `[x] Complete`
 
 **Goal:** Per-category monthly budgets with visual progress and overspend alerts.
 

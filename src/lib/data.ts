@@ -1,3 +1,5 @@
+import { useBudgetStore } from "@/store/budgetStore"
+
 /**
  * DATA LAYER
  *
@@ -205,8 +207,9 @@ export function getAnalytics(): AnalyticsData {
 
   const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
   const remainingDays = Math.max(1, lastDayOfMonth.getDate() - now.getDate() + 1)
-  // No budget store yet (Sprint 5) — fall back to income as the monthly budget
-  const monthlyBudget = totalIncome
+  // Use budget store total if budgets are set; otherwise fall back to income
+  const totalBudgeted = useBudgetStore.getState().getTotalMonthlyBudget()
+  const monthlyBudget = totalBudgeted > 0 ? totalBudgeted : totalIncome
   const remaining = monthlyBudget - totalExpense
   const safeToSpend = remaining / remainingDays
   const budgetProgress = totalIncome > 0 ? Math.min(totalExpense / totalIncome, 1) : 0
