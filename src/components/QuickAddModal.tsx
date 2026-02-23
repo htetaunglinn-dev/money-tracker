@@ -32,6 +32,7 @@ import { getIcon } from "@/lib/icons"
 import { cn } from "@/lib/utils"
 import { useWalletStore } from "@/store/walletStore"
 import { useBudgetStore } from "@/store/budgetStore"
+import { useCurrencySymbol } from "@/store/settingsStore"
 
 const schema = z.object({
   type: z.enum(["income", "expense"]),
@@ -61,6 +62,7 @@ export function QuickAddModal({
   onSuccess,
 }: QuickAddModalProps) {
   const categories = getCategories()
+  const symbol = useCurrencySymbol()
   const wallets = useWalletStore((s) => s.wallets)
   const getBudgetByCategoryId = useBudgetStore((s) => s.getBudgetByCategoryId)
   const isEditing = !!editTransaction
@@ -132,7 +134,7 @@ export function QuickAddModal({
             const overage = (spent - budget.amount).toFixed(2)
             const cat = categories.find((c) => c.id === payload.categoryId)
             toast.warning(
-              `Over budget on ${cat?.name ?? "this category"} by $${overage}`,
+              `Over budget on ${cat?.name ?? "this category"} by ${symbol}${overage}`,
               { duration: 5000 }
             )
           }
@@ -199,7 +201,7 @@ export function QuickAddModal({
                   <FormControl>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold">
-                        $
+                        {symbol}
                       </span>
                       <Input
                         {...field}

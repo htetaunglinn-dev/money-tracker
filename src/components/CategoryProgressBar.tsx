@@ -1,19 +1,14 @@
 "use client"
 
 import type { AnalyticsData } from "@/lib/data"
+import { useCurrencySymbol } from "@/store/settingsStore"
 
 interface Props {
   categories: AnalyticsData["expensesByCategory"]
 }
 
-const fmtShort = (n: number) =>
-  new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(n)
-
 export function CategoryProgressBar({ categories }: Props) {
+  const symbol = useCurrencySymbol()
   const top3 = categories.slice(0, 3)
   const maxTotal = top3[0]?.total ?? 1
 
@@ -42,7 +37,9 @@ export function CategoryProgressBar({ categories }: Props) {
                   {cat.count} txn{cat.count !== 1 ? "s" : ""}
                 </span>
               </div>
-              <span className="text-sm font-semibold ml-2 shrink-0">{fmtShort(cat.total)}</span>
+              <span className="text-sm font-semibold ml-2 shrink-0">
+                {symbol}{cat.total.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              </span>
             </div>
             <div className="h-1.5 rounded-full bg-muted overflow-hidden">
               <div

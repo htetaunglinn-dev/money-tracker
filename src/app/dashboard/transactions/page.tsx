@@ -11,16 +11,15 @@ import {
 import { TransactionList } from "@/components/TransactionList"
 import { QuickAddModal } from "@/components/QuickAddModal"
 import { cn } from "@/lib/utils"
+import { useFmtCurrency } from "@/store/settingsStore"
 
 const TABS = ["All", "Income", "Expense"] as const
 type Tab = (typeof TABS)[number]
 
 const PAGE_SIZE = 20
 
-const fmtCurrency = (n: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n)
-
 export default function TransactionsPage() {
+  const fmtCurrency = useFmtCurrency()
   const [tab, setTab] = useState<Tab>("All")
   const [editingTx, setEditingTx] = useState<StoredTransaction | null>(null)
   const [modalOpen, setModalOpen] = useState(false)

@@ -12,9 +12,7 @@ import { TrendingUp, TrendingDown, Minus, Wallet, ChevronRight, Sparkles, PiggyB
 import { useWalletStore } from "@/store/walletStore"
 import { useSavingsStore } from "@/store/savingsStore"
 import { DynamicIcon } from "@/lib/icons"
-
-const fmtCurrency = (n: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n)
+import { useFmtCurrency } from "@/store/settingsStore"
 
 const fmtDate = (dateString: string) =>
   new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(
@@ -23,6 +21,7 @@ const fmtDate = (dateString: string) =>
 
 export default function DashboardPage() {
   const { data: session } = useSession()
+  const fmtCurrency = useFmtCurrency()
   const wallets = useWalletStore((s) => s.wallets)
   const getTotalBalance = useWalletStore((s) => s.getTotalBalance)
 

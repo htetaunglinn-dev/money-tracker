@@ -5,6 +5,7 @@ import { Trash2 } from "lucide-react"
 import { type StoredTransaction, type StoredCategory } from "@/lib/data"
 import { getIcon } from "@/lib/icons"
 import { cn } from "@/lib/utils"
+import { useFmtCurrency } from "@/store/settingsStore"
 
 interface TransactionListProps {
   transactions: StoredTransaction[]
@@ -50,9 +51,6 @@ function groupByDate(transactions: StoredTransaction[]): DateGroup[] {
 
   return Array.from(groups.entries()).map(([label, items]) => ({ label, items }))
 }
-
-const fmtCurrency = (n: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n)
 
 // ─── Swipeable row ────────────────────────────────────────────────────────────
 
@@ -133,6 +131,7 @@ export function TransactionList({
   onEdit,
   onDelete,
 }: TransactionListProps) {
+  const fmtCurrency = useFmtCurrency()
   const catMap = Object.fromEntries(categories.map((c) => [c.id, c]))
 
   if (transactions.length === 0) {

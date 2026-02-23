@@ -25,6 +25,7 @@ import {
 import { useWalletStore, type Wallet, WALLET_TYPE_META } from "@/store/walletStore"
 import { DynamicIcon } from "@/lib/icons"
 import { cn } from "@/lib/utils"
+import { useCurrencySymbol, useFmtCurrency } from "@/store/settingsStore"
 
 const fmtCurrency = (n: number, currency = "USD") =>
   new Intl.NumberFormat("en-US", { style: "currency", currency }).format(n)
@@ -102,6 +103,8 @@ export function TransferModal({
   onOpenChange,
   defaultFromWallet,
 }: TransferModalProps) {
+  const symbol = useCurrencySymbol()
+  const fmt = useFmtCurrency()
   const { wallets, transfer } = useWalletStore()
 
   const form = useForm<FormValues>({
@@ -133,7 +136,7 @@ export function TransferModal({
       return
     }
     transfer(values.fromId, values.toId, amount)
-    toast.success(`Transferred ${fmtCurrency(amount)} successfully`)
+    toast.success(`Transferred ${fmt(amount)} successfully`)
     onOpenChange(false)
   }
 
@@ -233,7 +236,7 @@ export function TransferModal({
                   <FormControl>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold">
-                        $
+                        {symbol}
                       </span>
                       <Input
                         {...field}

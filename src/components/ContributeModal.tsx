@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { DynamicIcon } from "@/lib/icons"
 import { useSavingsStore, type SavingsGoal } from "@/store/savingsStore"
+import { useCurrencySymbol } from "@/store/settingsStore"
 
 const schema = z.object({
   amount: z
@@ -46,6 +47,7 @@ export function ContributeModal({
   goal,
 }: ContributeModalProps) {
   const addContribution = useSavingsStore((s) => s.addContribution)
+  const symbol = useCurrencySymbol()
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -66,7 +68,7 @@ export function ContributeModal({
       toast.success(`🎉 "${updated.name}" goal reached!`, { duration: 5000 })
     } else {
       toast.success(
-        `$${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} added to "${goal.name}"`
+        `${symbol}${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} added to "${goal.name}"`
       )
     }
     onOpenChange(false)

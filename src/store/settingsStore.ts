@@ -30,3 +30,16 @@ export const CURRENCY_OPTIONS = [
   { value: "MYR", label: "MYR — Malaysian Ringgit",  symbol: "RM" },
   { value: "MMK", label: "MMK — Myanmar Kyat",       symbol: "K"  },
 ]
+
+/** Returns the symbol (e.g. "$", "€") for the currently selected currency. */
+export function useCurrencySymbol(): string {
+  const currency = useSettingsStore((s) => s.currency)
+  return CURRENCY_OPTIONS.find((c) => c.value === currency)?.symbol ?? "$"
+}
+
+/** Returns a formatter function that formats a number using the currently selected currency. */
+export function useFmtCurrency(): (n: number) => string {
+  const currency = useSettingsStore((s) => s.currency)
+  return (n: number) =>
+    new Intl.NumberFormat("en-US", { style: "currency", currency }).format(n)
+}

@@ -5,6 +5,7 @@ import dynamic from "next/dynamic"
 import { BarChart3, TrendingUp, TrendingDown, ReceiptText } from "lucide-react"
 import { getReportsData, type ReportPeriod } from "@/lib/data"
 import { SpendingCalendar } from "@/components/SpendingCalendar"
+import { useCurrencySymbol } from "@/store/settingsStore"
 
 const DonutChart = dynamic(
   () => import("@/components/DonutChart").then((m) => ({ default: m.DonutChart })),
@@ -31,9 +32,9 @@ const PERIODS: { value: ReportPeriod; label: string }[] = [
 export default function ReportsPage() {
   const [period, setPeriod] = useState<ReportPeriod>("month")
   const data = useMemo(() => getReportsData(period), [period])
+  const currency = useCurrencySymbol()
 
   const now = new Date()
-  const currency = "$"
 
   return (
     <div className="space-y-5 pb-24">
@@ -147,6 +148,7 @@ export default function ReportsPage() {
             data={data.calendarData}
             year={now.getFullYear()}
             month={now.getMonth()}
+            currencySymbol={currency}
           />
         ) : (
           <div className="flex flex-col items-center justify-center py-8 gap-2 text-center">

@@ -12,8 +12,10 @@ import { SavingsGoalCard } from "@/components/SavingsGoalCard"
 import { AddGoalModal } from "@/components/AddGoalModal"
 import { ContributeModal } from "@/components/ContributeModal"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { useCurrencySymbol } from "@/store/settingsStore"
 
 export default function BudgetPage() {
+  const symbol = useCurrencySymbol()
   // ── Budget state ────────────────────────────────────────────────────────────
   const { budgets, addBudget, updateBudget, deleteBudget, getTotalMonthlyBudget } =
     useBudgetStore()
@@ -157,8 +159,8 @@ export default function BudgetPage() {
               <div className="flex justify-between items-baseline mb-3">
                 <span className="text-sm text-muted-foreground">Monthly Budget</span>
                 <span className="text-xs text-muted-foreground">
-                  ${totalSpent.toLocaleString(undefined, { maximumFractionDigits: 0 })} /{" "}
-                  ${totalBudget.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  {symbol}{totalSpent.toLocaleString(undefined, { maximumFractionDigits: 0 })} /{" "}
+                  {symbol}{totalBudget.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </span>
               </div>
 
@@ -176,7 +178,7 @@ export default function BudgetPage() {
                 <div>
                   <p className="text-xs text-muted-foreground">Budgeted</p>
                   <p className="text-sm font-bold text-money-light">
-                    ${totalBudget.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    {symbol}{totalBudget.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                   </p>
                 </div>
                 <div>
@@ -185,13 +187,13 @@ export default function BudgetPage() {
                     className="text-sm font-bold"
                     style={{ color: progressColor(overallRatio) }}
                   >
-                    ${totalSpent.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    {symbol}{totalSpent.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                   </p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Remaining</p>
                   <p className="text-sm font-bold text-money-green">
-                    ${totalRemaining.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    {symbol}{totalRemaining.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                   </p>
                 </div>
               </div>

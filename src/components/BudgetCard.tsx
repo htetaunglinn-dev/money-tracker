@@ -4,6 +4,7 @@ import { Pencil, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { Budget } from "@/store/budgetStore"
 import { DynamicIcon } from "@/lib/icons"
+import { useFmtCurrency } from "@/store/settingsStore"
 
 interface BudgetCardProps {
   budget: Budget
@@ -25,6 +26,7 @@ function getProgressBg(ratio: number): string {
 }
 
 export function BudgetCard({ budget, spent, onEdit, onDelete }: BudgetCardProps) {
+  const fmt = useFmtCurrency()
   const ratio = budget.amount > 0 ? Math.min(spent / budget.amount, 1) : 0
   const remaining = Math.max(budget.amount - spent, 0)
   const isOver = spent > budget.amount
@@ -56,7 +58,7 @@ export function BudgetCard({ budget, spent, onEdit, onDelete }: BudgetCardProps)
               {budget.categoryName}
             </p>
             <p className="text-xs text-muted-foreground">
-              ${budget.amount.toLocaleString()}{periodLabel}
+              {fmt(budget.amount)}{periodLabel}
             </p>
           </div>
         </div>
@@ -92,18 +94,16 @@ export function BudgetCard({ budget, spent, onEdit, onDelete }: BudgetCardProps)
           <span className="text-muted-foreground">
             Spent{" "}
             <span className="font-semibold" style={{ color }}>
-              ${spent.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              {fmt(spent)}
             </span>
           </span>
           {isOver ? (
             <span className="text-red-400 font-semibold">
-              ${(spent - budget.amount).toLocaleString(undefined, { maximumFractionDigits: 2 })} over
+              {fmt(spent - budget.amount)} over
             </span>
           ) : (
             <span className="text-muted-foreground">
-              $
-              {remaining.toLocaleString(undefined, { maximumFractionDigits: 2 })}{" "}
-              left
+              {fmt(remaining)}{" "}left
             </span>
           )}
         </div>

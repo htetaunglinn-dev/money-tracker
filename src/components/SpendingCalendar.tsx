@@ -9,6 +9,7 @@ interface SpendingCalendarProps {
   data: DayData[]
   year: number
   month: number // 0-indexed
+  currencySymbol?: string
 }
 
 const DAY_LABELS = ["S", "M", "T", "W", "T", "F", "S"]
@@ -22,7 +23,7 @@ function getIntensityClass(total: number, maxTotal: number): string {
   return "bg-money-green text-money-black"
 }
 
-export function SpendingCalendar({ data, year, month }: SpendingCalendarProps) {
+export function SpendingCalendar({ data, year, month, currencySymbol = "$" }: SpendingCalendarProps) {
   const dayMap = Object.fromEntries(data.map((d) => [d.date, d.total]))
   const daysInMonth = new Date(year, month + 1, 0).getDate()
   const firstDay = new Date(year, month, 1).getDay() // 0 = Sunday
@@ -60,11 +61,11 @@ export function SpendingCalendar({ data, year, month }: SpendingCalendarProps) {
           return (
             <div
               key={cell.date}
-              title={total > 0 ? `$${total.toFixed(0)}` : undefined}
+              title={total > 0 ? `${currencySymbol}${total.toFixed(0)}` : undefined}
               className={[
                 "aspect-square rounded-md flex items-center justify-center text-[10px] font-medium transition-colors",
                 getIntensityClass(total, maxTotal),
-                isToday ? "ring-1 ring-money-green ring-offset-1 ring-offset-[#202020]" : "",
+                isToday ? "ring-1 ring-money-green ring-offset-1 ring-offset-money-dark" : "",
               ]
                 .filter(Boolean)
                 .join(" ")}

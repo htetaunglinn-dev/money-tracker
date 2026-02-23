@@ -3,16 +3,16 @@
 import { useState, useEffect, useRef } from "react"
 import { cn } from "@/lib/utils"
 import type { AnalyticsData } from "@/lib/data"
+import { useFmtCurrency } from "@/store/settingsStore"
 
 interface Props {
   data: AnalyticsData
   className?: string
 }
 
-const fmt = (n: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Math.max(0, n))
-
 export function SafeToSpend({ data, className }: Props) {
+  const fmtRaw = useFmtCurrency()
+  const fmt = (n: number) => fmtRaw(Math.max(0, n))
   const { safeToSpend, budgetProgress, totalIncome, remainingDays } = data.summary
   const [displayed, setDisplayed] = useState(0)
   const rafRef = useRef<number>(0)

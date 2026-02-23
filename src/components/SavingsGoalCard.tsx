@@ -3,6 +3,7 @@
 import { Pencil, Trash2, Plus } from "lucide-react"
 import { DynamicIcon } from "@/lib/icons"
 import type { SavingsGoal } from "@/store/savingsStore"
+import { useFmtCurrency } from "@/store/settingsStore"
 
 const CIRCUMFERENCE = 2 * Math.PI * 34
 const NOW = Date.now()
@@ -27,6 +28,7 @@ export function SavingsGoalCard({
   onEdit,
   onDelete,
 }: SavingsGoalCardProps) {
+  const fmt = useFmtCurrency()
   const ratio =
     goal.targetAmount > 0
       ? Math.min(goal.currentAmount / goal.targetAmount, 1)
@@ -157,19 +159,19 @@ export function SavingsGoalCard({
           <div className="flex justify-between text-xs">
             <span className="text-muted-foreground">Saved</span>
             <span className="font-semibold" style={{ color }}>
-              ${goal.currentAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              {fmt(goal.currentAmount)}
             </span>
           </div>
           <div className="flex justify-between text-xs">
             <span className="text-muted-foreground">Target</span>
             <span className="font-semibold text-money-light">
-              ${goal.targetAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              {fmt(goal.targetAmount)}
             </span>
           </div>
           <div className="flex justify-between text-xs">
             <span className="text-muted-foreground">Remaining</span>
             <span className="font-semibold text-muted-foreground">
-              ${remaining.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              {fmt(remaining)}
             </span>
           </div>
         </div>
