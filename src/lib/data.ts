@@ -48,6 +48,38 @@ export interface StoredTransaction {
   tags?: string[]
 }
 
+export type ReportPeriod = "week" | "month" | "year"
+
+export interface ReportsData {
+  summary: {
+    totalIncome: number
+    totalExpense: number
+    balance: number
+    label: string
+  }
+  expensesByCategory: Array<{
+    id: string
+    name: string
+    icon: string
+    color: string
+    total: number
+    percentage: number
+  }>
+  monthlyTrend: Array<{
+    month: string
+    income: number
+    expense: number
+  }>
+  calendarData: Array<{
+    date: string
+    total: number
+  }>
+  nudges: Array<{
+    text: string
+    direction: "up" | "down"
+  }>
+}
+
 export interface AnalyticsData {
   summary: {
     totalIncome: number
@@ -226,5 +258,140 @@ export function getAnalytics(): AnalyticsData {
     },
     expensesByCategory,
     recentTransactions,
+  }
+}
+
+// ─── Reports data (period-aware, includes trend + calendar) ──────────────────
+// MIGRATE: replace with fetch('/api/analytics/reports?period=...')
+
+export function getReportsData(period: ReportPeriod): ReportsData {
+  const now = new Date()
+  const allTxs = getTransactions()
+  const catMap = Object.fromEntries(getCategories().map((c) => [c.id, c]))
+
+  // ── Period window ─────────────────────────────────────────────────────────
+  let start: Date
+  let label: string
+  const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59)
+
+  if (period === "week") {
+    start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6, 0, 0, 0)
+    label = "Last 7 Days"
+  } else if (period === "year") {
+    start = new Date(now.getFullYear(), 0, 1, 0, 0, 0)
+    label = `${now.getFullYear()}`
+  } else {
+    start = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0)
+    label = `${now.toLocaleString("default", { month: "long" })} ${now.getFullYear()}`
+  }
+
+  const periodTxs = allTxs.filter((tx) => {
+    const d = new Date(tx.date)
+    return d >= start && d <= end
+  })
+
+  // ── Summary ───────────────────────────────────────────────────────────────
+  const totalIncome = periodTxs
+    .filter((tx) => tx.type === "income")
+    .reduce((s, tx) => s + tx.amount, 0)
+  const totalExpense = periodTxs
+    .filter((tx) => tx.type === "expense")
+    .reduce((s, tx) => s + tx.amount, 0)
+
+  // ── Expenses by category ──────────────────────────────────────────────────
+  const expenseMap = new Map<string, number>()
+  periodTxs
+    .filter((tx) => tx.type === "expense")
+    .forEach((tx) => {
+      expenseMap.set(tx.categoryId, (expenseMap.get(tx.categoryId) ?? 0) + tx.amount)
+    })
+  const expensesByCategory = Array.from(expenseMap.entries())
+    .map(([catId, total]) => {
+      const cat = catMap[catId] ?? { name: "Unknown", icon: "circle", color: "#888" }
+      return {
+        id: catId,
+        name: cat.name,
+        icon: cat.icon,
+        color: cat.color,
+        total,
+        percentage: totalExpense > 0 ? Math.round((total / totalExpense) * 100) : 0,
+      }
+    })
+    .sort((a, b) => b.total - a.total)
+
+  // ── 6-month income/expense trend ──────────────────────────────────────────
+  const monthlyTrend = Array.from({ length: 6 }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1)
+    const mStart = new Date(d.getFullYear(), d.getMonth(), 1)
+    const mEnd = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59)
+    const mTxs = allTxs.filter((tx) => {
+      const txd = new Date(tx.date)
+      return txd >= mStart && txd <= mEnd
+    })
+    return {
+      month: d.toLocaleString("default", { month: "short" }),
+      income: mTxs.filter((tx) => tx.type === "income").reduce((s, tx) => s + tx.amount, 0),
+      expense: mTxs.filter((tx) => tx.type === "expense").reduce((s, tx) => s + tx.amount, 0),
+    }
+  })
+
+  // ── Calendar heatmap (current month daily expense) ────────────────────────
+  const calStart = new Date(now.getFullYear(), now.getMonth(), 1)
+  const calEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
+  const calMap = new Map<string, number>()
+  allTxs
+    .filter((tx) => {
+      const d = new Date(tx.date)
+      return d >= calStart && d <= calEnd && tx.type === "expense"
+    })
+    .forEach((tx) => {
+      const day = new Date(tx.date).toISOString().slice(0, 10)
+      calMap.set(day, (calMap.get(day) ?? 0) + tx.amount)
+    })
+  const calendarData = Array.from(calMap.entries())
+    .map(([date, total]) => ({ date, total }))
+    .sort((a, b) => a.date.localeCompare(b.date))
+
+  // ── Nudges: current month vs previous month by category ───────────────────
+  const prevStart = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+  const prevEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59)
+  const currStart = new Date(now.getFullYear(), now.getMonth(), 1)
+
+  const prevMap = new Map<string, number>()
+  const currMap = new Map<string, number>()
+  allTxs
+    .filter((tx) => tx.type === "expense")
+    .forEach((tx) => {
+      const d = new Date(tx.date)
+      if (d >= prevStart && d <= prevEnd)
+        prevMap.set(tx.categoryId, (prevMap.get(tx.categoryId) ?? 0) + tx.amount)
+      if (d >= currStart)
+        currMap.set(tx.categoryId, (currMap.get(tx.categoryId) ?? 0) + tx.amount)
+    })
+
+  const nudges: ReportsData["nudges"] = []
+  currMap.forEach((curr, catId) => {
+    const prev = prevMap.get(catId)
+    if (prev && prev > 0) {
+      const pct = Math.round(((curr - prev) / prev) * 100)
+      if (Math.abs(pct) >= 10) {
+        const cat = catMap[catId]
+        if (cat) {
+          nudges.push({
+            text: `${Math.abs(pct)}% ${pct > 0 ? "more" : "less"} on ${cat.name} this month`,
+            direction: pct > 0 ? "up" : "down",
+          })
+        }
+      }
+    }
+  })
+  nudges.sort((a, b) => parseInt(b.text) - parseInt(a.text))
+
+  return {
+    summary: { totalIncome, totalExpense, balance: totalIncome - totalExpense, label },
+    expensesByCategory,
+    monthlyTrend,
+    calendarData,
+    nudges,
   }
 }

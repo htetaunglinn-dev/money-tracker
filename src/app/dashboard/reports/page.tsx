@@ -1,0 +1,145 @@
+"use client"
+
+import { useState, useMemo } from "react"
+import dynamic from "next/dynamic"
+import { BarChart3, TrendingUp, TrendingDown } from "lucide-react"
+import { getReportsData, type ReportPeriod } from "@/lib/data"
+import { SpendingCalendar } from "@/components/SpendingCalendar"
+
+const DonutChart = dynamic(
+  () => import("@/components/DonutChart").then((m) => ({ default: m.DonutChart })),
+  {
+    ssr: false,
+    loading: () => <div className="h-55 animate-pulse rounded-xl bg-white/5" />,
+  }
+)
+
+const TrendLineChart = dynamic(
+  () => import("@/components/TrendLineChart").then((m) => ({ default: m.TrendLineChart })),
+  {
+    ssr: false,
+    loading: () => <div className="h-44 animate-pulse rounded-xl bg-white/5" />,
+  }
+)
+
+const PERIODS: { value: ReportPeriod; label: string }[] = [
+  { value: "week", label: "W" },
+  { value: "month", label: "M" },
+  { value: "year", label: "Y" },
+]
+
+export default function ReportsPage() {
+  const [period, setPeriod] = useState<ReportPeriod>("month")
+  const data = useMemo(() => getReportsData(period), [period])
+
+  const now = new Date()
+  const currency = "$"
+
+  return (
+    <div className="space-y-5 pb-24">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-money-light">Reports</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">{data.summary.label}</p>
+        </div>
+        {/* Period switcher */}
+        <div className="flex gap-0.5 bg-white/5 rounded-xl p-1">
+          {PERIODS.map((p) => (
+            <button
+              key={p.value}
+              onClick={() => setPeriod(p.value)}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
+                period === p.value
+                  ? "bg-money-green text-money-black"
+                  : "text-muted-foreground hover:text-money-light"
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Summary strip */}
+      <div className="grid grid-cols-3 gap-2">
+        <div className="bg-white/5 rounded-xl p-3 text-center">
+          <p className="text-[10px] text-muted-foreground mb-1">Income</p>
+          <p className="text-sm font-bold text-money-green">
+            {currency}
+            {data.summary.totalIncome.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+          </p>
+        </div>
+        <div className="bg-white/5 rounded-xl p-3 text-center">
+          <p className="text-[10px] text-muted-foreground mb-1">Expense</p>
+          <p className="text-sm font-bold text-red-400">
+            {currency}
+            {data.summary.totalExpense.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+          </p>
+        </div>
+        <div className="bg-white/5 rounded-xl p-3 text-center">
+          <p className="text-[10px] text-muted-foreground mb-1">Balance</p>
+          <p
+            className={`text-sm font-bold ${
+              data.summary.balance >= 0 ? "text-money-green" : "text-red-400"
+            }`}
+          >
+            {data.summary.balance < 0 ? "-" : ""}
+            {currency}
+            {Math.abs(data.summary.balance).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+          </p>
+        </div>
+      </div>
+
+      {/* Spending Insights / Nudges */}
+      {data.nudges.length > 0 && (
+        <div className="bg-white/5 rounded-2xl p-4 border border-white/5 space-y-2">
+          <h2 className="text-sm font-semibold text-money-light flex items-center gap-2">
+            <BarChart3 className="h-4 w-4 text-money-green" />
+            Spending Insights
+          </h2>
+          <div className="space-y-2">
+            {data.nudges.slice(0, 3).map((nudge, i) => (
+              <div key={i} className="flex items-center gap-2.5">
+                {nudge.direction === "up" ? (
+                  <TrendingUp className="h-4 w-4 text-red-400 shrink-0" />
+                ) : (
+                  <TrendingDown className="h-4 w-4 text-money-green shrink-0" />
+                )}
+                <span className="text-xs text-muted-foreground">{nudge.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Donut chart — spending by category */}
+      <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+        <h2 className="text-sm font-semibold text-money-light mb-4">Spending by Category</h2>
+        <DonutChart data={data.expensesByCategory} currency={currency} />
+      </div>
+
+      {/* Trend line chart — 6 months */}
+      <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+        <h2 className="text-sm font-semibold text-money-light mb-3">
+          Income vs Expense
+          <span className="text-[10px] font-normal text-muted-foreground ml-1.5">(6 months)</span>
+        </h2>
+        <TrendLineChart data={data.monthlyTrend} currency={currency} />
+      </div>
+
+      {/* Calendar heatmap */}
+      <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+        <h2 className="text-sm font-semibold text-money-light mb-4">
+          Daily Spending —{" "}
+          {now.toLocaleString("default", { month: "long", year: "numeric" })}
+        </h2>
+        <SpendingCalendar
+          data={data.calendarData}
+          year={now.getFullYear()}
+          month={now.getMonth()}
+        />
+      </div>
+    </div>
+  )
+}

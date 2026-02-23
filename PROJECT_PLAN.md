@@ -187,7 +187,7 @@ interface Budget {
 ---
 
 ### Sprint 6 — Reports & Analytics
-**Status:** `[ ] Pending`
+**Status:** `[x] Complete`
 
 **Goal:** Visual analytics page with charts (Recharts already installed).
 
