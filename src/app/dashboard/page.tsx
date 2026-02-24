@@ -236,14 +236,17 @@ export default function DashboardPage() {
               {recentTransactions.slice(0, 5).map((tx) => (
                 <div key={tx._id} className="flex items-center gap-3">
                   <div
-                    className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 text-xs font-bold"
+                    className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
                     style={{
                       backgroundColor: `${tx.category.color}1a`,
-                      color: tx.category.color,
                       border: `1px solid ${tx.category.color}33`,
                     }}
                   >
-                    {tx.category.name.charAt(0)}
+                    <DynamicIcon
+                      name={tx.category.icon}
+                      className="h-4 w-4"
+                      style={{ color: tx.category.color }}
+                    />
                   </div>
 
                   <div className="flex-1 min-w-0">
