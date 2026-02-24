@@ -343,7 +343,7 @@ export default function SettingsPage() {
 
             <div className="flex flex-col gap-2">
               <Label>Icon</Label>
-              <div className="grid grid-cols-9 gap-1 max-h-36 overflow-y-auto pr-1">
+              <div className="grid grid-cols-9 gap-1 max-h-36 overflow-y-auto p-1">
                 {AVAILABLE_ICONS.map((icon) => (
                   <button
                     key={icon}
