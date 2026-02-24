@@ -28,7 +28,7 @@ import {
   getAnalytics,
   type StoredTransaction,
 } from "@/lib/data"
-import { getIcon } from "@/lib/icons"
+import { getIcon, DynamicIcon } from "@/lib/icons"
 import { cn } from "@/lib/utils"
 import { useWalletStore } from "@/store/walletStore"
 import { useBudgetStore } from "@/store/budgetStore"
@@ -43,7 +43,7 @@ const schema = z.object({
   categoryId: z.string().min(1, "Select a category"),
   description: z.string().min(1, "Description is required"),
   date: z.string().min(1, "Date is required"),
-  walletId: z.string().optional(),
+  walletId: z.string().min(1, "Select a wallet"),
 })
 
 type FormValues = z.infer<typeof schema>
@@ -64,6 +64,7 @@ export function QuickAddModal({
   const categories = getCategories()
   const symbol = useCurrencySymbol()
   const wallets = useWalletStore((s) => s.wallets)
+  const defaultWalletId = useWalletStore((s) => s.defaultWalletId)
   const getBudgetByCategoryId = useBudgetStore((s) => s.getBudgetByCategoryId)
   const isEditing = !!editTransaction
 
@@ -75,7 +76,7 @@ export function QuickAddModal({
       categoryId: "",
       description: "",
       date: new Date().toISOString().split("T")[0],
-      walletId: undefined,
+      walletId: defaultWalletId ?? "",
     },
   })
 
@@ -91,7 +92,7 @@ export function QuickAddModal({
         categoryId: editTransaction.categoryId,
         description: editTransaction.description,
         date: editTransaction.date.split("T")[0],
-        walletId: editTransaction.walletId,
+        walletId: editTransaction.walletId ?? defaultWalletId ?? "",
       })
     } else {
       form.reset({
@@ -100,10 +101,10 @@ export function QuickAddModal({
         categoryId: "",
         description: "",
         date: new Date().toISOString().split("T")[0],
-        walletId: undefined,
+        walletId: defaultWalletId ?? "",
       })
     }
-  }, [open, editTransaction, form])
+  }, [open, editTransaction, form, defaultWalletId])
 
   function onSubmit(values: FormValues) {
     const payload = {
@@ -308,27 +309,39 @@ export function QuickAddModal({
               )}
             />
 
-            {/* Wallet (optional) */}
-            {wallets.length > 0 && (
-              <FormField
-                control={form.control}
-                name="walletId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-muted-foreground text-xs uppercase tracking-wider">
-                      Wallet <span className="normal-case text-[10px]">(optional)</span>
-                    </FormLabel>
+            {/* Wallet (required) */}
+            <FormField
+              control={form.control}
+              name="walletId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-muted-foreground text-xs uppercase tracking-wider">
+                    Wallet
+                  </FormLabel>
+                  {wallets.length === 0 ? (
+                    <div className="flex items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10">
+                      <DynamicIcon name="wallet" className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <p className="text-xs text-muted-foreground flex-1">
+                        No wallets yet.{" "}
+                        <a
+                          href="/dashboard/wallets"
+                          className="text-money-green underline underline-offset-2"
+                          onClick={() => onOpenChange(false)}
+                        >
+                          Create one
+                        </a>{" "}
+                        to track balances.
+                      </p>
+                    </div>
+                  ) : (
                     <div className="flex flex-wrap gap-2">
                       {wallets.map((w) => {
-                        const Icon = getIcon(w.icon)
                         const isSelected = field.value === w.id
                         return (
                           <button
                             key={w.id}
                             type="button"
-                            onClick={() =>
-                              field.onChange(isSelected ? undefined : w.id)
-                            }
+                            onClick={() => field.onChange(w.id)}
                             className={cn(
                               "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs transition-all border",
                               isSelected
@@ -345,16 +358,17 @@ export function QuickAddModal({
                                 : {}
                             }
                           >
-                            <Icon className="h-3.5 w-3.5" />
+                            <DynamicIcon name={w.icon} className="h-3.5 w-3.5" />
                             <span>{w.name}</span>
                           </button>
                         )
                       })}
                     </div>
-                  </FormItem>
-                )}
-              />
-            )}
+                  )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <Button
               type="submit"

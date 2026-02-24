@@ -1,4 +1,5 @@
 import { useBudgetStore } from "@/store/budgetStore"
+import { useWalletStore } from "@/store/walletStore"
 
 /**
  * DATA LAYER
@@ -123,6 +124,12 @@ function write(key: string, value: unknown): void {
   sessionStorage.setItem(key, JSON.stringify(value))
 }
 
+function adjustWalletBalance(walletId: string, delta: number): void {
+  const { wallets, updateWallet } = useWalletStore.getState()
+  const wallet = wallets.find((w) => w.id === walletId)
+  if (wallet) updateWallet(walletId, { balance: wallet.balance + delta })
+}
+
 // ─── Categories ──────────────────────────────────────────────────────────────
 // MIGRATE: replace with fetch('/api/categories')
 
@@ -182,6 +189,9 @@ export function addTransaction(tx: Omit<StoredTransaction, "id">): StoredTransac
   // MIGRATE: return fetch('/api/transactions', { method: 'POST', body: JSON.stringify(tx) }).then(r => r.json())
   const newTx: StoredTransaction = { id: `tx-${Date.now()}`, ...tx }
   write(KEYS.transactions, [newTx, ...getTransactions()])
+  if (tx.walletId) {
+    adjustWalletBalance(tx.walletId, tx.type === "income" ? tx.amount : -tx.amount)
+  }
   return newTx
 }
 
@@ -190,13 +200,32 @@ export function updateTransaction(
   updates: Partial<Omit<StoredTransaction, "id">>
 ): void {
   // MIGRATE: return fetch(`/api/transactions/${id}`, { method: 'PUT', body: JSON.stringify(updates) })
-  const txs = getTransactions().map((tx) => (tx.id === id ? { ...tx, ...updates } : tx))
-  write(KEYS.transactions, txs)
+  const txs = getTransactions()
+  const old = txs.find((tx) => tx.id === id)
+  // Reverse old wallet effect
+  if (old?.walletId) {
+    adjustWalletBalance(old.walletId, old.type === "income" ? -old.amount : old.amount)
+  }
+  // Apply new wallet effect
+  const updated = old ? { ...old, ...updates } : updates
+  if (updated.walletId && updated.amount != null && updated.type) {
+    adjustWalletBalance(
+      updated.walletId,
+      updated.type === "income" ? updated.amount : -updated.amount
+    )
+  }
+  write(KEYS.transactions, txs.map((tx) => (tx.id === id ? { ...tx, ...updates } : tx)))
 }
 
 export function deleteTransaction(id: string): void {
   // MIGRATE: return fetch(`/api/transactions/${id}`, { method: 'DELETE' })
-  write(KEYS.transactions, getTransactions().filter((tx) => tx.id !== id))
+  const txs = getTransactions()
+  const old = txs.find((tx) => tx.id === id)
+  // Reverse wallet effect before removal
+  if (old?.walletId) {
+    adjustWalletBalance(old.walletId, old.type === "income" ? -old.amount : old.amount)
+  }
+  write(KEYS.transactions, txs.filter((tx) => tx.id !== id))
 }
 
 // ─── Analytics (computed from stored data) ───────────────────────────────────
@@ -249,13 +278,13 @@ export function getAnalytics(): AnalyticsData {
 
   const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
   const remainingDays = Math.max(1, lastDayOfMonth.getDate() - now.getDate() + 1)
-  // Use budget store total if budgets are set; otherwise fall back to income
-  const totalBudgeted = useBudgetStore.getState().getTotalMonthlyBudget()
   const fixedReserved = useBudgetStore.getState().getFixedBudgetTotal()
-  const monthlyBudget = totalBudgeted > 0 ? totalBudgeted : totalIncome
-  const remaining = monthlyBudget - totalExpense
-  // Reserve fixed-budget amounts (e.g. rent) so they aren't counted as daily spendable
-  const discretionary = Math.max(0, remaining - fixedReserved)
+  const totalBudgeted = useBudgetStore.getState().getTotalMonthlyBudget()
+  // PocketGuard approach: income is the pool; fixed bills are deducted upfront.
+  // Variable budgets are spending caps (shown on budget page), not pool reducers.
+  // Fall back to total budget when no income is recorded yet.
+  const pool = totalIncome > 0 ? totalIncome : totalBudgeted
+  const discretionary = Math.max(0, pool - fixedReserved - totalExpense)
   const safeToSpend = discretionary / remainingDays
   const budgetProgress = totalIncome > 0 ? Math.min(totalExpense / totalIncome, 1) : 0
 

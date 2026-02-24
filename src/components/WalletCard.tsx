@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { GradientCard } from "@/components/ui/gradient-card"
-import { MoreVertical, Pencil, Trash2, ArrowLeftRight } from "lucide-react"
+import { MoreVertical, Pencil, Trash2, ArrowLeftRight, Star } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +24,9 @@ interface WalletCardProps {
 
 export function WalletCard({ wallet, onEdit, onTransfer }: WalletCardProps) {
   const deleteWallet = useWalletStore((s) => s.deleteWallet)
+  const setDefaultWallet = useWalletStore((s) => s.setDefaultWallet)
+  const defaultWalletId = useWalletStore((s) => s.defaultWalletId)
+  const isDefault = defaultWalletId === wallet.id
   const [menuOpen, setMenuOpen] = useState(false)
 
   const meta = WALLET_TYPE_META[wallet.type]
@@ -50,9 +53,14 @@ export function WalletCard({ wallet, onEdit, onTransfer }: WalletCardProps) {
               <DynamicIcon name={wallet.icon} className="h-5 w-5" style={{ color: wallet.color }} />
             </div>
             <div>
-              <p className="text-sm font-semibold text-foreground leading-tight">
-                {wallet.name}
-              </p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-sm font-semibold text-foreground leading-tight">
+                  {wallet.name}
+                </p>
+                {isDefault && (
+                  <Star className="h-3 w-3 fill-money-green text-money-green shrink-0" />
+                )}
+              </div>
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
                 {meta.label}
               </p>
@@ -69,6 +77,15 @@ export function WalletCard({ wallet, onEdit, onTransfer }: WalletCardProps) {
               align="end"
               className="bg-[#1a1a1a] border-money-green/10 text-money-light"
             >
+              {!isDefault && (
+                <DropdownMenuItem
+                  onClick={() => { setDefaultWallet(wallet.id); setMenuOpen(false) }}
+                  className="gap-2 cursor-pointer hover:bg-white/5"
+                >
+                  <Star className="h-4 w-4" />
+                  Set as Default
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem
                 onClick={() => { onTransfer(wallet); setMenuOpen(false) }}
                 className="gap-2 cursor-pointer hover:bg-white/5"

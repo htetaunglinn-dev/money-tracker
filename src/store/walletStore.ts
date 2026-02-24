@@ -15,9 +15,11 @@ export interface Wallet {
 
 interface WalletStore {
   wallets: Wallet[]
+  defaultWalletId: string | null
   addWallet: (wallet: Omit<Wallet, "id">) => void
   updateWallet: (id: string, updates: Partial<Omit<Wallet, "id">>) => void
   deleteWallet: (id: string) => void
+  setDefaultWallet: (id: string) => void
   transfer: (fromId: string, toId: string, amount: number) => void
   getTotalBalance: () => number
 }
@@ -47,13 +49,17 @@ export const useWalletStore = create<WalletStore>()(
   persist(
     (set, get) => ({
       wallets: [],
+      defaultWalletId: null,
 
       addWallet: (wallet) => {
         const newWallet: Wallet = {
           id: `wallet-${Date.now()}`,
           ...wallet,
         }
-        set((s) => ({ wallets: [...s.wallets, newWallet] }))
+        set((s) => ({
+          wallets: [...s.wallets, newWallet],
+          defaultWalletId: s.defaultWalletId ?? newWallet.id,
+        }))
       },
 
       updateWallet: (id, updates) => {
@@ -65,8 +71,13 @@ export const useWalletStore = create<WalletStore>()(
       },
 
       deleteWallet: (id) => {
-        set((s) => ({ wallets: s.wallets.filter((w) => w.id !== id) }))
+        set((s) => ({
+          wallets: s.wallets.filter((w) => w.id !== id),
+          defaultWalletId: s.defaultWalletId === id ? null : s.defaultWalletId,
+        }))
       },
+
+      setDefaultWallet: (id) => set({ defaultWalletId: id }),
 
       transfer: (fromId, toId, amount) => {
         set((s) => ({
