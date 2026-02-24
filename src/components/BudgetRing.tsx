@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import type { Root } from "@amcharts/amcharts5"
+import { useFmtCurrency } from "@/store/settingsStore"
 
 interface Props {
   /** 0–1 ratio of expense / income */
@@ -16,14 +17,8 @@ function ringColor(progress: number) {
   return "#EF4444"
 }
 
-const fmtShort = (n: number) =>
-  new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(n)
-
 export function BudgetRing({ progress, income, expense }: Props) {
+  const fmtCurrency = useFmtCurrency()
   const chartRef = useRef<HTMLDivElement>(null)
   const clamped = Math.min(progress, 1)
   const pct = Math.round(clamped * 100)
@@ -117,8 +112,8 @@ export function BudgetRing({ progress, income, expense }: Props) {
       <div className="text-center leading-tight">
         <p className="text-[10px] text-muted-foreground">Monthly spending</p>
         <p className="text-xs font-semibold tabular-nums">
-          {fmtShort(expense)}{" "}
-          <span className="font-normal text-muted-foreground">/ {fmtShort(income)}</span>
+          {fmtCurrency(expense)}{" "}
+          <span className="font-normal text-muted-foreground">/ {fmtCurrency(income)}</span>
         </p>
       </div>
     </div>
