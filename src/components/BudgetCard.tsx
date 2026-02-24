@@ -1,6 +1,6 @@
 "use client"
 
-import { Pencil, Trash2 } from "lucide-react"
+import { Lock, Pencil, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { Budget } from "@/store/budgetStore"
 import { DynamicIcon } from "@/lib/icons"
@@ -56,9 +56,14 @@ export function BudgetCard({ budget, spent, onEdit, onDelete }: BudgetCardProps)
             />
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-money-light truncate">
-              {budget.categoryName}
-            </p>
+            <div className="flex items-center gap-1.5">
+              <p className="text-sm font-semibold text-money-light truncate">
+                {budget.categoryName}
+              </p>
+              {budget.isFixed && (
+                <Lock className="h-3 w-3 text-muted-foreground shrink-0" aria-label="Fixed expense" />
+              )}
+            </div>
             <p className="text-xs text-muted-foreground">
               {fmt(budget.amount)}{periodLabel}
             </p>

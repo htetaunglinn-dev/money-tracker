@@ -251,9 +251,12 @@ export function getAnalytics(): AnalyticsData {
   const remainingDays = Math.max(1, lastDayOfMonth.getDate() - now.getDate() + 1)
   // Use budget store total if budgets are set; otherwise fall back to income
   const totalBudgeted = useBudgetStore.getState().getTotalMonthlyBudget()
+  const fixedReserved = useBudgetStore.getState().getFixedBudgetTotal()
   const monthlyBudget = totalBudgeted > 0 ? totalBudgeted : totalIncome
   const remaining = monthlyBudget - totalExpense
-  const safeToSpend = remaining / remainingDays
+  // Reserve fixed-budget amounts (e.g. rent) so they aren't counted as daily spendable
+  const discretionary = Math.max(0, remaining - fixedReserved)
+  const safeToSpend = discretionary / remainingDays
   const budgetProgress = totalIncome > 0 ? Math.min(totalExpense / totalIncome, 1) : 0
 
   return {

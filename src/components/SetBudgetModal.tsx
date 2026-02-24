@@ -33,6 +33,7 @@ const schema = z.object({
     .refine((v) => parseFloat(v) > 0, "Must be greater than 0"),
   period: z.enum(["monthly", "weekly", "yearly"]),
   carryOver: z.boolean(),
+  isFixed: z.boolean(),
 })
 
 type FormValues = z.infer<typeof schema>
@@ -50,6 +51,7 @@ interface SetBudgetModalProps {
     amount: number
     period: "monthly" | "weekly" | "yearly"
     carryOver: boolean
+    isFixed: boolean
   }) => void
 }
 
@@ -81,6 +83,7 @@ export function SetBudgetModal({
       amount: "",
       period: "monthly",
       carryOver: false,
+      isFixed: false,
     },
   })
 
@@ -92,6 +95,7 @@ export function SetBudgetModal({
         amount: editBudget.amount.toString(),
         period: editBudget.period,
         carryOver: editBudget.carryOver,
+        isFixed: editBudget.isFixed ?? false,
       })
     } else {
       form.reset({
@@ -99,6 +103,7 @@ export function SetBudgetModal({
         amount: "",
         period: "monthly",
         carryOver: false,
+        isFixed: false,
       })
     }
   }, [open, editBudget, form])
@@ -115,6 +120,7 @@ export function SetBudgetModal({
       amount: parseFloat(values.amount),
       period: values.period,
       carryOver: values.carryOver,
+      isFixed: values.isFixed,
     })
     onOpenChange(false)
   }
@@ -272,6 +278,43 @@ export function SetBudgetModal({
                     </FormLabel>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       Roll unused budget into next period
+                    </p>
+                  </div>
+                  <FormControl>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={field.value}
+                      onClick={() => field.onChange(!field.value)}
+                      className={cn(
+                        "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors",
+                        field.value ? "bg-money-green" : "bg-white/20"
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-lg transition-transform",
+                          field.value ? "translate-x-4" : "translate-x-0"
+                        )}
+                      />
+                    </button>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {/* Fixed Expense */}
+            <FormField
+              control={form.control}
+              name="isFixed"
+              render={({ field }) => (
+                <FormItem className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-3">
+                  <div>
+                    <FormLabel className="text-sm font-medium text-money-light cursor-pointer">
+                      Fixed Expense
+                    </FormLabel>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Reserve full amount — excluded from daily safe-to-spend
                     </p>
                   </div>
                   <FormControl>

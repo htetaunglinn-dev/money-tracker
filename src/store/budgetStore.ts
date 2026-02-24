@@ -10,6 +10,7 @@ export interface Budget {
   amount: number
   period: "monthly" | "weekly" | "yearly"
   carryOver: boolean
+  isFixed?: boolean  // reserve full amount from safe-to-spend pool (e.g. rent, utilities)
 }
 
 interface BudgetStore {
@@ -18,6 +19,7 @@ interface BudgetStore {
   updateBudget: (id: string, updates: Partial<Omit<Budget, "id">>) => void
   deleteBudget: (id: string) => void
   getTotalMonthlyBudget: () => number
+  getFixedBudgetTotal: () => number
   getBudgetByCategoryId: (categoryId: string) => Budget | undefined
 }
 
@@ -54,6 +56,18 @@ export const useBudgetStore = create<BudgetStore>()(
           if (b.period === "yearly") return sum + b.amount / 12
           return sum
         }, 0)
+      },
+
+      getFixedBudgetTotal: () => {
+        const { budgets } = get()
+        return budgets
+          .filter((b) => b.isFixed)
+          .reduce((sum, b) => {
+            if (b.period === "monthly") return sum + b.amount
+            if (b.period === "weekly") return sum + b.amount * 4
+            if (b.period === "yearly") return sum + b.amount / 12
+            return sum
+          }, 0)
       },
 
       getBudgetByCategoryId: (categoryId) => {
