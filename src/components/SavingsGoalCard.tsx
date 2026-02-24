@@ -4,6 +4,7 @@ import { Pencil, Trash2, Plus } from "lucide-react"
 import { DynamicIcon } from "@/lib/icons"
 import type { SavingsGoal } from "@/store/savingsStore"
 import { useFmtCurrency } from "@/store/settingsStore"
+import { GradientCard } from "@/components/ui/gradient-card"
 
 const CIRCUMFERENCE = 2 * Math.PI * 34
 const NOW = Date.now()
@@ -51,12 +52,13 @@ export function SavingsGoalCard({
   const remaining = Math.max(goal.targetAmount - goal.currentAmount, 0)
 
   return (
-    <div
-      className="bg-white/5 rounded-2xl p-4 border transition-colors"
-      style={{
-        borderColor: isComplete ? `${color}40` : "rgba(255,255,255,0.05)",
-      }}
+    <GradientCard
+      glowColor={color}
+      glowOpacity={isComplete ? 0.30 : 0.18}
+      className="transition-colors"
+      style={isComplete ? { borderColor: `${color}40` } : undefined}
     >
+      <div className="p-4">
       {/* Header row */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
@@ -176,6 +178,7 @@ export function SavingsGoalCard({
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </GradientCard>
   )
 }

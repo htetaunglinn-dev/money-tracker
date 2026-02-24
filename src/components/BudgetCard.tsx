@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import type { Budget } from "@/store/budgetStore"
 import { DynamicIcon } from "@/lib/icons"
 import { useFmtCurrency } from "@/store/settingsStore"
+import { GradientCard } from "@/components/ui/gradient-card"
 
 interface BudgetCardProps {
   budget: Budget
@@ -39,7 +40,8 @@ export function BudgetCard({ budget, spent, onEdit, onDelete }: BudgetCardProps)
     : "/yr"
 
   return (
-    <div className="bg-white/5 rounded-2xl p-4 border border-white/5 hover:border-white/10 transition-colors">
+    <GradientCard glowColor={color} glowOpacity={0.18} className="hover:border-white/10 transition-colors">
+      <div className="p-4">
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
@@ -108,6 +110,7 @@ export function BudgetCard({ budget, spent, onEdit, onDelete }: BudgetCardProps)
           )}
         </div>
       </div>
-    </div>
+      </div>
+    </GradientCard>
   )
 }

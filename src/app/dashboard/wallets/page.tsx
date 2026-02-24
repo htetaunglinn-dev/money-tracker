@@ -7,6 +7,7 @@ import { WalletCard } from "@/components/WalletCard"
 import { AddWalletModal } from "@/components/AddWalletModal"
 import { TransferModal } from "@/components/TransferModal"
 import { useWalletStore, type Wallet as WalletType } from "@/store/walletStore"
+import { GradientCard } from "@/components/ui/gradient-card"
 
 const fmtCurrency = (n: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n)
@@ -79,21 +80,26 @@ export default function WalletsPage() {
 
       {/* Total Balance Banner */}
       {wallets.length > 0 && (
-        <div className="rounded-2xl p-4 border border-money-green/10 bg-money-green/5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
-            Total Balance
-          </p>
-          <p
-            className={`text-3xl font-bold tabular-nums tracking-tight mt-1 ${
-              isNegative ? "text-red-400" : "text-money-green"
-            }`}
-          >
-            {fmtCurrency(totalBalance)}
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Across all wallets
-          </p>
-        </div>
+        <GradientCard
+          glowColor={isNegative ? "#ef4444" : "#5DD62C"}
+          glowOpacity={0.15}
+        >
+          <div className="p-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+              Total Balance
+            </p>
+            <p
+              className={`text-3xl font-bold tabular-nums tracking-tight mt-1 ${
+                isNegative ? "text-red-400" : "text-money-green"
+              }`}
+            >
+              {fmtCurrency(totalBalance)}
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Across all wallets
+            </p>
+          </div>
+        </GradientCard>
       )}
 
       {/* Wallet Grid */}

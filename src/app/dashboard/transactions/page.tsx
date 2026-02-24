@@ -12,6 +12,7 @@ import { TransactionList } from "@/components/TransactionList"
 import { QuickAddModal } from "@/components/QuickAddModal"
 import { cn } from "@/lib/utils"
 import { useFmtCurrency } from "@/store/settingsStore"
+import { GradientCard } from "@/components/ui/gradient-card"
 
 const TABS = ["All", "Income", "Expense"] as const
 type Tab = (typeof TABS)[number]
@@ -72,29 +73,33 @@ export default function TransactionsPage() {
     <div className="max-w-lg mx-auto space-y-4">
       {/* Summary cards */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-money-green/10 border border-money-green/20 rounded-2xl p-3 flex items-center gap-3">
-          <TrendingUp className="h-5 w-5 text-money-green shrink-0" />
-          <div>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
-              Income
-            </p>
-            <p className="text-sm font-bold text-money-green tabular-nums">
-              {fmtCurrency(totalIncome)}
-            </p>
+        <GradientCard glowColor="#5DD62C" glowOpacity={0.22}>
+          <div className="p-3 flex items-center gap-3 bg-money-green/8">
+            <TrendingUp className="h-5 w-5 text-money-green shrink-0" />
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                Income
+              </p>
+              <p className="text-sm font-bold text-money-green tabular-nums">
+                {fmtCurrency(totalIncome)}
+              </p>
+            </div>
           </div>
-        </div>
+        </GradientCard>
 
-        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-3 flex items-center gap-3">
-          <TrendingDown className="h-5 w-5 text-red-400 shrink-0" />
-          <div>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
-              Expenses
-            </p>
-            <p className="text-sm font-bold text-red-400 tabular-nums">
-              {fmtCurrency(totalExpense)}
-            </p>
+        <GradientCard glowColor="#ef4444" glowOpacity={0.22}>
+          <div className="p-3 flex items-center gap-3 bg-red-500/8">
+            <TrendingDown className="h-5 w-5 text-red-400 shrink-0" />
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                Expenses
+              </p>
+              <p className="text-sm font-bold text-red-400 tabular-nums">
+                {fmtCurrency(totalExpense)}
+              </p>
+            </div>
           </div>
-        </div>
+        </GradientCard>
       </div>
 
       {/* Filter tabs */}

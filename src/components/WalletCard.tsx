@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
+import { GradientCard } from "@/components/ui/gradient-card"
 import { MoreVertical, Pencil, Trash2, ArrowLeftRight } from "lucide-react"
 import {
   DropdownMenu,
@@ -30,17 +30,13 @@ export function WalletCard({ wallet, onEdit, onTransfer }: WalletCardProps) {
   const isNegative = wallet.balance < 0
 
   return (
-    <Card
-      className="py-0 overflow-hidden relative"
-      style={{ borderColor: `${wallet.color}30` }}
+    <GradientCard
+      glowColor={wallet.color}
+      glowOpacity={0.22}
+      accentStrip={wallet.color}
+      className="rounded-xl"
     >
-      {/* Color accent strip */}
-      <div
-        className="absolute top-0 inset-x-0 h-0.5"
-        style={{ backgroundColor: wallet.color }}
-      />
-
-      <CardContent className="p-4">
+      <div className="p-4">
         {/* Header row */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2.5">
@@ -110,7 +106,7 @@ export function WalletCard({ wallet, onEdit, onTransfer }: WalletCardProps) {
         <p className="text-[10px] text-muted-foreground mt-0.5 uppercase tracking-wider">
           {wallet.currency} · Balance
         </p>
-      </CardContent>
-    </Card>
+      </div>
+    </GradientCard>
   )
 }

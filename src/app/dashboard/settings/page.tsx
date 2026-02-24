@@ -31,6 +31,7 @@ import {
   type StoredCategory,
 } from "@/lib/data"
 import { useSettingsStore, CURRENCY_OPTIONS } from "@/store/settingsStore"
+import { GradientCard } from "@/components/ui/gradient-card"
 
 const AVAILABLE_ICONS = [
   "utensils", "car", "shopping-bag", "film", "receipt", "heart",
@@ -156,7 +157,8 @@ export default function SettingsPage() {
       <h1 className="text-2xl font-bold text-foreground pt-1">Settings</h1>
 
       {/* ── Appearance ──────────────────────────────────────── */}
-      <section className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-4">
+      <GradientCard variant="surface" glowColor="#5DD62C" glowOpacity={0.12}>
+      <section className="p-5 flex flex-col gap-4">
         <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Appearance</h2>
         <div className="flex flex-col gap-2">
           <Label>Theme</Label>
@@ -180,9 +182,11 @@ export default function SettingsPage() {
           </div>
         </div>
       </section>
+      </GradientCard>
 
       {/* ── Preferences ─────────────────────────────────────── */}
-      <section className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-4">
+      <GradientCard variant="surface" glowColor="#5DD62C" glowOpacity={0.12}>
+      <section className="p-5 flex flex-col gap-4">
         <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Preferences</h2>
 
         <div className="flex flex-col gap-2">
@@ -220,9 +224,11 @@ export default function SettingsPage() {
           </Select>
         </div>
       </section>
+      </GradientCard>
 
       {/* ── Categories ──────────────────────────────────────── */}
-      <section className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-4">
+      <GradientCard variant="surface" glowColor="#5DD62C" glowOpacity={0.12}>
+      <section className="p-5 flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Categories</h2>
           <Button
@@ -257,9 +263,11 @@ export default function SettingsPage() {
           <p className="text-sm text-muted-foreground text-center py-4">No categories yet. Add one above.</p>
         )}
       </section>
+      </GradientCard>
 
       {/* ── Account ─────────────────────────────────────────── */}
-      <section className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-4">
+      <GradientCard variant="surface" glowColor="#5DD62C" glowOpacity={0.12}>
+      <section className="p-5 flex flex-col gap-4">
         <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Account</h2>
         <div className="flex flex-col gap-0.5">
           {session?.user?.name && (
@@ -275,6 +283,7 @@ export default function SettingsPage() {
           Sign out
         </button>
       </section>
+      </GradientCard>
 
       {/* ── Category add/edit dialog ─────────────────────────── */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

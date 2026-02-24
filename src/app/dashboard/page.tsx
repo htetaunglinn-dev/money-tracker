@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
+import { GradientCard } from "@/components/ui/gradient-card"
 import { getAnalytics } from "@/lib/data"
 import { SafeToSpend } from "@/components/SafeToSpend"
 import { BudgetRing } from "@/components/BudgetRing"
@@ -78,50 +79,59 @@ export default function DashboardPage() {
       {wallets.length > 0 && (
         <Link
           href="/dashboard/wallets"
-          className="flex items-center justify-between px-4 py-3 rounded-2xl border border-money-green/10 bg-money-green/5 hover:bg-money-green/10 transition-colors shrink-0"
+          className="relative flex rounded-2xl overflow-hidden border border-white/5 shrink-0 hover:border-money-green/20 transition-colors"
         >
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-money-green/10 border border-money-green/20 flex items-center justify-center shrink-0">
-              <Wallet className="h-4.5 w-4.5 text-money-green" />
+          <div className="absolute inset-0 bg-linear-to-br from-[#1c1c1c] to-[#111111]" />
+          <div
+            className="absolute -top-12 -right-12 w-48 h-48 rounded-full blur-3xl pointer-events-none"
+            style={{ backgroundColor: "#5DD62C", opacity: 0.12 }}
+          />
+          <div className="relative flex items-center justify-between px-4 py-3 w-full">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-money-green/10 border border-money-green/20 flex items-center justify-center shrink-0">
+                <Wallet className="h-4.5 w-4.5 text-money-green" />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                  Wallets · {wallets.length} {wallets.length === 1 ? "account" : "accounts"}
+                </p>
+                <p className={`text-base font-bold tabular-nums ${walletBalancePositive ? "text-foreground" : "text-red-400"}`}>
+                  {fmtCurrency(totalWalletBalance)}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
-                Wallets · {wallets.length} {wallets.length === 1 ? "account" : "accounts"}
-              </p>
-              <p className={`text-base font-bold tabular-nums ${walletBalancePositive ? "text-foreground" : "text-red-400"}`}>
-                {fmtCurrency(totalWalletBalance)}
-              </p>
-            </div>
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
           </div>
-          <ChevronRight className="h-4 w-4 text-muted-foreground" />
         </Link>
       )}
 
       {/* ── First-time onboarding card ─────────────────────────────── */}
       {wallets.length === 0 && recentTransactions.length === 0 && (
-        <div className="rounded-2xl border border-money-green/20 bg-money-green/5 p-5 flex flex-col gap-3 shrink-0">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-money-green" />
-            <p className="text-sm font-semibold text-foreground">Welcome to Money Tracker!</p>
+        <GradientCard glowColor="#5DD62C" glowOpacity={0.15} className="shrink-0">
+          <div className="p-5 flex flex-col gap-3">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-money-green" />
+              <p className="text-sm font-semibold text-foreground">Welcome to Money Tracker!</p>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Get started in two steps: add a wallet to track your accounts, then log your first transaction.
+            </p>
+            <div className="flex gap-2">
+              <Link
+                href="/dashboard/wallets"
+                className="flex-1 text-center text-xs font-semibold py-2 rounded-lg bg-money-green text-money-black hover:bg-money-green/90 transition-colors"
+              >
+                Add a wallet
+              </Link>
+              <Link
+                href="/dashboard/transactions"
+                className="flex-1 text-center text-xs font-semibold py-2 rounded-lg border border-money-green/30 text-money-green hover:bg-money-green/10 transition-colors"
+              >
+                Log a transaction
+              </Link>
+            </div>
           </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            Get started in two steps: add a wallet to track your accounts, then log your first transaction.
-          </p>
-          <div className="flex gap-2">
-            <Link
-              href="/dashboard/wallets"
-              className="flex-1 text-center text-xs font-semibold py-2 rounded-lg bg-money-green text-money-black hover:bg-money-green/90 transition-colors"
-            >
-              Add a wallet
-            </Link>
-            <Link
-              href="/dashboard/transactions"
-              className="flex-1 text-center text-xs font-semibold py-2 rounded-lg border border-money-green/30 text-money-green hover:bg-money-green/10 transition-colors"
-            >
-              Log a transaction
-            </Link>
-          </div>
-        </div>
+        </GradientCard>
       )}
 
       {/* ── Row A: Safe to Spend + Monthly Overview (side by side) ── */}
@@ -267,8 +277,16 @@ export default function DashboardPage() {
 
       {/* ── Savings Goals Widget ───────────────────────────────────── */}
       {goals.length > 0 && (
-        <Link href="/dashboard/budget" className="block shrink-0">
-          <div className="rounded-2xl border border-money-green/10 bg-white/5 p-4 space-y-3 hover:border-money-green/20 transition-colors">
+        <Link
+          href="/dashboard/budget"
+          className="relative block rounded-2xl overflow-hidden border border-white/5 shrink-0 hover:border-money-green/20 transition-colors"
+        >
+          <div className="absolute inset-0 bg-linear-to-br from-[#1c1c1c] to-[#111111]" />
+          <div
+            className="absolute -top-12 -right-12 w-48 h-48 rounded-full blur-3xl pointer-events-none"
+            style={{ backgroundColor: "#5DD62C", opacity: 0.12 }}
+          />
+          <div className="relative p-4 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <PiggyBank className="h-3.5 w-3.5 text-money-green" />
@@ -337,3 +355,4 @@ export default function DashboardPage() {
     </div>
   )
 }
+

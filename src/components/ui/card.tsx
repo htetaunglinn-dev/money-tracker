@@ -1,15 +1,14 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { GradientCard } from "@/components/ui/gradient-card"
 
 function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div
+    <GradientCard
       data-slot="card"
-      className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
-        className
-      )}
+      contentClassName="flex flex-col gap-6"
+      className={cn("rounded-xl shadow-sm text-card-foreground", className)}
       {...props}
     />
   )

@@ -13,6 +13,7 @@ import { AddGoalModal } from "@/components/AddGoalModal"
 import { ContributeModal } from "@/components/ContributeModal"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { useCurrencySymbol } from "@/store/settingsStore"
+import { GradientCard } from "@/components/ui/gradient-card"
 
 export default function BudgetPage() {
   const symbol = useCurrencySymbol()
@@ -155,7 +156,8 @@ export default function BudgetPage() {
         <TabsContent value="budget" className="mt-4 space-y-3">
           {/* Overall summary card */}
           {budgets.length > 0 && (
-            <div className="bg-white/5 rounded-2xl p-5 border border-white/5">
+            <GradientCard glowColor={progressColor(overallRatio)} glowOpacity={0.18}>
+              <div className="p-5">
               <div className="flex justify-between items-baseline mb-3">
                 <span className="text-sm text-muted-foreground">Monthly Budget</span>
                 <span className="text-xs text-muted-foreground">
@@ -197,7 +199,8 @@ export default function BudgetPage() {
                   </p>
                 </div>
               </div>
-            </div>
+              </div>
+            </GradientCard>
           )}
 
           {/* Budget cards */}
