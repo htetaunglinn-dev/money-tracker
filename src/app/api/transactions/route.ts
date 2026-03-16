@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/auth"
 import { ObjectId } from "mongodb"
 import clientPromise from "@/mongodb"
 import { Transaction } from "@/models"
+import { getSessionUserId } from "@/lib/mobile-auth"
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth()
+    const userId = await getSessionUserId(request)
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     const db = client.db("money_tracker")
 
     const filter: Record<string, unknown> = {
-      userId: new ObjectId(session.user.id)
+      userId: new ObjectId(userId)
     }
 
     if (type) filter.type = type
@@ -68,9 +68,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth()
+    const userId = await getSessionUserId(request)
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
       description,
       type,
       categoryId: new ObjectId(categoryId),
-      userId: new ObjectId(session.user.id),
+      userId: new ObjectId(userId),
       date: date ? new Date(date) : new Date(),
       location,
       tags: tags || [],

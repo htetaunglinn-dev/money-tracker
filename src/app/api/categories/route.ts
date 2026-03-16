@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/auth"
 import { ObjectId } from "mongodb"
 import clientPromise from "@/mongodb"
 import { Category } from "@/models"
+import { getSessionUserId } from "@/lib/mobile-auth"
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth()
+    const userId = await getSessionUserId(request)
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     const db = client.db("money_tracker")
 
     const filter: Record<string, unknown> = {
-      userId: new ObjectId(session.user.id)
+      userId: new ObjectId(userId)
     }
 
     if (type) {
@@ -44,9 +44,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth()
+    const userId = await getSessionUserId(request)
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
 
     const existingCategory = await db.collection<Category>("categories").findOne({
       name,
-      userId: new ObjectId(session.user.id)
+      userId: new ObjectId(userId)
     })
 
     if (existingCategory) {
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
       icon,
       color,
       type,
-      userId: new ObjectId(session.user.id),
+      userId: new ObjectId(userId),
       isDefault: false,
       createdAt: new Date(),
       updatedAt: new Date(),

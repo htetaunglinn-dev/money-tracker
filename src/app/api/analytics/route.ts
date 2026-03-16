@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/auth"
 import { ObjectId } from "mongodb"
 import clientPromise from "@/mongodb"
+import { getSessionUserId } from "@/lib/mobile-auth"
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth()
+    const rawUserId = await getSessionUserId(request)
 
-    if (!session?.user?.id) {
+    if (!rawUserId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     const client = await clientPromise
     const db = client.db("money_tracker")
 
-    const userId = new ObjectId(session.user.id)
+    const userId = new ObjectId(rawUserId)
 
     // Calculate date range
     const now = new Date()
