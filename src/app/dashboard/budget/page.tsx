@@ -116,7 +116,7 @@ export default function BudgetPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-money-light">
+          <h1 className="text-xl font-bold text-foreground">
             {activeTab === "budget" ? "Budget Planner" : "Savings Goals"}
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
@@ -179,7 +179,7 @@ export default function BudgetPage() {
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div>
                   <p className="text-xs text-muted-foreground">Budgeted</p>
-                  <p className="text-sm font-bold text-money-light">
+                  <p className="text-sm font-bold text-foreground">
                     {symbol}{totalBudget.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                   </p>
                 </div>
@@ -221,7 +221,7 @@ export default function BudgetPage() {
               <div className="w-16 h-16 rounded-2xl bg-money-green/10 flex items-center justify-center mb-4">
                 <Target className="h-8 w-8 text-money-green" />
               </div>
-              <h2 className="text-lg font-semibold text-money-light mb-1">
+              <h2 className="text-lg font-semibold text-foreground mb-1">
                 No budgets yet
               </h2>
               <p className="text-sm text-muted-foreground max-w-xs mb-6">
@@ -256,7 +256,7 @@ export default function BudgetPage() {
               <div className="w-16 h-16 rounded-2xl bg-money-green/10 flex items-center justify-center mb-4">
                 <PiggyBank className="h-8 w-8 text-money-green" />
               </div>
-              <h2 className="text-lg font-semibold text-money-light mb-1">
+              <h2 className="text-lg font-semibold text-foreground mb-1">
                 No goals yet
               </h2>
               <p className="text-sm text-muted-foreground max-w-xs mb-6">

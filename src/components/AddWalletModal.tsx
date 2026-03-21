@@ -123,9 +123,9 @@ export function AddWalletModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-[#1a1a1a] border-money-green/10 text-money-light max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-md bg-card border-money-green/10 text-card-foreground max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-money-light">
+          <DialogTitle className="text-card-foreground">
             {isEditing ? "Edit Wallet" : "Add Wallet"}
           </DialogTitle>
         </DialogHeader>
@@ -155,7 +155,7 @@ export function AddWalletModal({
                             "flex flex-col items-center gap-1.5 p-3 rounded-xl text-xs transition-all border",
                             isSelected
                               ? "border-current"
-                              : "border-transparent text-muted-foreground hover:bg-white/5"
+                              : "border-transparent text-muted-foreground hover:bg-muted"
                           )}
                           style={
                             isSelected
@@ -198,7 +198,7 @@ export function AddWalletModal({
                       <Input
                         {...field}
                         placeholder={`e.g. ${WALLET_TYPE_META[selectedType].label} Wallet`}
-                        className="pl-9 bg-white/5 border-white/10 text-money-light focus-visible:ring-money-green"
+                        className="pl-9 bg-muted border-border text-card-foreground focus-visible:ring-money-green"
                       />
                     </div>
                   </FormControl>
@@ -225,7 +225,7 @@ export function AddWalletModal({
                           step="0.01"
                           placeholder="0.00"
                           inputMode="decimal"
-                          className="bg-white/5 border-white/10 text-money-light focus-visible:ring-money-green"
+                          className="bg-muted border-border text-card-foreground focus-visible:ring-money-green"
                         />
                       </FormControl>
                       <FormMessage />
@@ -246,7 +246,7 @@ export function AddWalletModal({
                         {...field}
                         placeholder="USD"
                         maxLength={3}
-                        className="bg-white/5 border-white/10 text-money-light focus-visible:ring-money-green uppercase"
+                        className="bg-muted border-border text-card-foreground focus-visible:ring-money-green uppercase"
                         onChange={(e) =>
                           field.onChange(e.target.value.toUpperCase())
                         }
@@ -273,7 +273,7 @@ export function AddWalletModal({
                         type="button"
                         onClick={() => field.onChange(c)}
                         className={cn(
-                          "w-7 h-7 rounded-full transition-all ring-offset-2 ring-offset-[#1a1a1a]",
+                          "w-7 h-7 rounded-full transition-all ring-offset-2 ring-offset-card",
                           field.value === c && "ring-2 ring-white"
                         )}
                         style={{ backgroundColor: c }}

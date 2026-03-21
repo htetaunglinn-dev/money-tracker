@@ -8,11 +8,10 @@ import { AddWalletModal } from "@/components/AddWalletModal"
 import { TransferModal } from "@/components/TransferModal"
 import { useWalletStore, type Wallet as WalletType } from "@/store/walletStore"
 import { GradientCard } from "@/components/ui/gradient-card"
-
-const fmtCurrency = (n: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n)
+import { useFmtCurrency } from "@/store/settingsStore"
 
 export default function WalletsPage() {
+  const fmtCurrency = useFmtCurrency()
   const wallets = useWalletStore((s) => s.wallets)
   const getTotalBalance = useWalletStore((s) => s.getTotalBalance)
 

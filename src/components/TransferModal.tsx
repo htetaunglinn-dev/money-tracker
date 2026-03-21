@@ -62,7 +62,7 @@ function WalletOption({
       onClick={onClick}
       className={cn(
         "w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all border",
-        selected ? "border-current" : "border-transparent hover:bg-white/5"
+        selected ? "border-current" : "border-transparent hover:bg-muted"
       )}
       style={
         selected
@@ -143,9 +143,9 @@ export function TransferModal({
   if (wallets.length < 2) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-md bg-[#1a1a1a] border-money-green/10 text-money-light">
+        <DialogContent className="sm:max-w-md bg-card border-money-green/10 text-card-foreground">
           <DialogHeader>
-            <DialogTitle className="text-money-light">Transfer</DialogTitle>
+            <DialogTitle className="text-card-foreground">Transfer</DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground text-center py-6">
             You need at least 2 wallets to transfer between them.
@@ -157,9 +157,9 @@ export function TransferModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-[#1a1a1a] border-money-green/10 text-money-light max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-md bg-card border-money-green/10 text-card-foreground max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-money-light">Transfer</DialogTitle>
+          <DialogTitle className="text-card-foreground">Transfer</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -193,7 +193,7 @@ export function TransferModal({
 
             {/* Arrow divider */}
             <div className="flex items-center justify-center">
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white/5 border border-white/10">
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted border border-border">
                 <ArrowDown className="h-4 w-4 text-muted-foreground" />
               </div>
             </div>
@@ -245,7 +245,7 @@ export function TransferModal({
                         min="0"
                         placeholder="0.00"
                         inputMode="decimal"
-                        className="pl-7 text-2xl font-bold bg-white/5 border-white/10 text-money-light h-14 focus-visible:ring-money-green"
+                        className="pl-7 text-2xl font-bold bg-muted border-border text-card-foreground h-14 focus-visible:ring-money-green"
                       />
                     </div>
                   </FormControl>

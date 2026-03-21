@@ -149,9 +149,9 @@ export function QuickAddModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-[#1a1a1a] border-money-green/10 text-money-light max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-md bg-card border-money-green/10 text-card-foreground max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-money-light">
+          <DialogTitle className="text-card-foreground">
             {isEditing ? "Edit Transaction" : "Add Transaction"}
           </DialogTitle>
         </DialogHeader>
@@ -179,7 +179,7 @@ export function QuickAddModal({
                             ? t === "income"
                               ? "bg-money-green text-money-black"
                               : "bg-red-500 text-white"
-                            : "bg-white/5 text-muted-foreground hover:bg-white/10"
+                            : "bg-muted text-muted-foreground hover:bg-muted/80"
                         )}
                       >
                         {t}
@@ -211,7 +211,7 @@ export function QuickAddModal({
                         min="0"
                         placeholder="0.00"
                         inputMode="decimal"
-                        className="pl-7 text-2xl font-bold bg-white/5 border-white/10 text-money-light h-14 focus-visible:ring-money-green"
+                        className="pl-7 text-2xl font-bold bg-muted border-border text-card-foreground h-14 focus-visible:ring-money-green"
                       />
                     </div>
                   </FormControl>
@@ -229,7 +229,8 @@ export function QuickAddModal({
                   <FormLabel className="text-muted-foreground text-xs uppercase tracking-wider">
                     Category
                   </FormLabel>
-                  <div className="grid grid-cols-3 gap-2 max-h-40 overflow-y-auto">
+                  <div className="relative">
+                  <div className="grid grid-cols-3 gap-2 max-h-40 overflow-y-auto pb-1">
                     {filteredCategories.map((cat) => {
                       const Icon = getIcon(cat.icon)
                       const isSelected = field.value === cat.id
@@ -242,7 +243,7 @@ export function QuickAddModal({
                             "flex flex-col items-center gap-1 p-2 rounded-xl text-xs transition-all border",
                             isSelected
                               ? "border-current"
-                              : "border-transparent text-muted-foreground hover:bg-white/5"
+                              : "border-transparent text-muted-foreground hover:bg-muted"
                           )}
                           style={
                             isSelected
@@ -262,6 +263,10 @@ export function QuickAddModal({
                       )
                     })}
                   </div>
+                  {filteredCategories.length > 6 && (
+                    <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 bg-linear-to-t from-card to-transparent rounded-b-xl" />
+                  )}
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -280,7 +285,7 @@ export function QuickAddModal({
                     <Input
                       {...field}
                       placeholder="e.g. Lunch at Café"
-                      className="bg-white/5 border-white/10 text-money-light focus-visible:ring-money-green"
+                      className="bg-muted border-border text-card-foreground focus-visible:ring-money-green"
                     />
                   </FormControl>
                   <FormMessage />
@@ -301,7 +306,7 @@ export function QuickAddModal({
                     <Input
                       {...field}
                       type="date"
-                      className="bg-white/5 border-white/10 text-money-light focus-visible:ring-money-green"
+                      className="bg-muted border-border text-card-foreground focus-visible:ring-money-green"
                     />
                   </FormControl>
                   <FormMessage />
@@ -319,7 +324,7 @@ export function QuickAddModal({
                     Wallet
                   </FormLabel>
                   {wallets.length === 0 ? (
-                    <div className="flex items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10">
+                    <div className="flex items-center gap-2 p-3 rounded-xl bg-muted border border-border">
                       <DynamicIcon name="wallet" className="h-4 w-4 text-muted-foreground shrink-0" />
                       <p className="text-xs text-muted-foreground flex-1">
                         No wallets yet.{" "}
@@ -346,7 +351,7 @@ export function QuickAddModal({
                               "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs transition-all border",
                               isSelected
                                 ? "border-current"
-                                : "border-transparent text-muted-foreground hover:bg-white/5"
+                                : "border-transparent text-muted-foreground hover:bg-muted"
                             )}
                             style={
                               isSelected

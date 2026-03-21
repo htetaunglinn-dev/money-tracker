@@ -81,16 +81,16 @@ export function ContributeModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-sm bg-[#1a1a1a] border-money-green/10 text-money-light">
+      <DialogContent className="sm:max-w-sm bg-card border-money-green/10 text-card-foreground">
         <DialogHeader>
-          <DialogTitle className="text-money-light">
+          <DialogTitle className="text-card-foreground">
             Add to {goal?.name ?? "Goal"}
           </DialogTitle>
         </DialogHeader>
 
         {/* Goal summary */}
         {goal && (
-          <div className="flex items-center gap-3 bg-white/5 rounded-xl p-3">
+          <div className="flex items-center gap-3 bg-muted rounded-xl p-3">
             <div
               className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
               style={{ backgroundColor: `${goal.color}20` }}
@@ -103,7 +103,7 @@ export function ContributeModal({
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex justify-between items-baseline mb-1">
-                <p className="text-xs font-semibold text-money-light truncate">
+                <p className="text-xs font-semibold text-card-foreground truncate">
                   {goal.name}
                 </p>
                 <span className="text-[10px] font-bold ml-2 shrink-0 text-muted-foreground">
@@ -136,7 +136,7 @@ export function ContributeModal({
                   key={amt}
                   type="button"
                   onClick={() => form.setValue("amount", amt.toString())}
-                  className="py-2 rounded-xl bg-white/5 text-xs font-semibold text-muted-foreground hover:bg-money-green/10 hover:text-money-green transition-colors"
+                  className="py-2 rounded-xl bg-muted text-xs font-semibold text-muted-foreground hover:bg-money-green/10 hover:text-money-green transition-colors"
                 >
                   +{amt}
                 </button>
@@ -160,7 +160,7 @@ export function ContributeModal({
                         step="0.01"
                         min="0"
                         placeholder="0.00"
-                        className="pl-8 h-14 text-2xl font-bold bg-white/5 border-white/10 text-money-light placeholder:text-white/20 focus:border-money-green/50"
+                        className="pl-8 h-14 text-2xl font-bold bg-muted border-border text-card-foreground placeholder:text-muted-foreground/30 focus:border-money-green/50"
                       />
                     </div>
                   </FormControl>

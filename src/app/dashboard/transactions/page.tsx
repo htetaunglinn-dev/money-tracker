@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import { TrendingUp, TrendingDown } from "lucide-react"
+import { TrendingUp, TrendingDown, ChevronDown } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import {
   getTransactions,
   getCategories,
@@ -71,6 +72,14 @@ export default function TransactionsPage() {
 
   return (
     <div className="max-w-lg mx-auto space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between pt-1 shrink-0">
+        <div>
+          <h1 className="text-lg font-bold tracking-tight text-foreground">Transactions</h1>
+          <p className="text-xs text-muted-foreground">{allTransactions.length} transactions</p>
+        </div>
+      </div>
+
       {/* Summary cards */}
       <div className="grid grid-cols-2 gap-3">
         <GradientCard glowColor="#5DD62C" glowOpacity={0.22}>
@@ -114,8 +123,8 @@ export default function TransactionsPage() {
             className={cn(
               "px-4 py-1.5 rounded-full text-xs font-semibold transition-all",
               tab === t
-                ? "bg-money-green text-money-black"
-                : "bg-white/5 text-muted-foreground hover:bg-white/10"
+                ? "bg-money-green text-money-black scale-105"
+                : "bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-foreground hover:scale-105 active:scale-95"
             )}
           >
             {t}
@@ -133,12 +142,14 @@ export default function TransactionsPage() {
       />
 
       {hasMore && (
-        <button
+        <Button
+          variant="outline"
           onClick={() => setPage((p) => p + 1)}
-          className="w-full py-3 text-sm text-muted-foreground hover:text-money-light transition-colors"
+          className="w-full gap-2 border-money-green/20 text-muted-foreground hover:text-foreground"
         >
+          <ChevronDown className="h-4 w-4" />
           Load more ({filtered.length - paginated.length} remaining)
-        </button>
+        </Button>
       )}
 
       {/* Edit modal (separate from layout FAB modal) */}

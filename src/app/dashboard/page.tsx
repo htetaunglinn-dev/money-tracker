@@ -266,10 +266,12 @@ export default function DashboardPage() {
               ))}
 
               {recentTransactions.length === 0 && (
-                <div className="text-center py-8">
+                <div className="text-center py-8 space-y-1">
                   <p className="text-sm text-muted-foreground">No transactions yet</p>
-                  <p className="text-xs text-muted-foreground mt-1 opacity-60">
-                    Add your first transaction to get started
+                  <p className="text-xs text-muted-foreground opacity-60">
+                    {wallets.length === 0
+                      ? "Create a wallet first, then add your transactions"
+                      : "Tap + to add your first transaction"}
                   </p>
                 </div>
               )}
@@ -328,7 +330,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-baseline mb-1">
-                        <p className="text-xs font-semibold text-money-light truncate">
+                        <p className="text-xs font-semibold text-foreground truncate">
                           {goal.name}
                         </p>
                         <span

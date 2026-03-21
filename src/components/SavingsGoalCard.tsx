@@ -1,6 +1,6 @@
 "use client"
 
-import { Pencil, Trash2, Plus } from "lucide-react"
+import { Pencil, Trash2, Plus, Trophy } from "lucide-react"
 import { DynamicIcon } from "@/lib/icons"
 import type { SavingsGoal } from "@/store/savingsStore"
 import { useFmtCurrency } from "@/store/settingsStore"
@@ -73,11 +73,12 @@ export function SavingsGoalCard({
             />
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-money-light truncate">
+            <p className="text-sm font-semibold text-foreground truncate">
               {goal.name}
             </p>
             {isComplete && (
-              <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-400/15 border border-amber-400/30 text-amber-400 text-[10px] font-bold uppercase tracking-wider">
+                <Trophy className="h-2.5 w-2.5" />
                 Goal Reached
               </span>
             )}
@@ -104,7 +105,7 @@ export function SavingsGoalCard({
           <button
             onClick={() => onEdit(goal)}
             aria-label="Edit goal"
-            className="p-1.5 rounded-lg text-muted-foreground hover:text-money-light hover:bg-white/10 transition-colors"
+            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/10 transition-colors"
           >
             <Pencil className="h-3.5 w-3.5" />
           </button>
@@ -166,7 +167,7 @@ export function SavingsGoalCard({
           </div>
           <div className="flex justify-between text-xs">
             <span className="text-muted-foreground">Target</span>
-            <span className="font-semibold text-money-light">
+            <span className="font-semibold text-foreground">
               {fmt(goal.targetAmount)}
             </span>
           </div>

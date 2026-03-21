@@ -75,7 +75,7 @@ function CategoryRow({
         <DynamicIcon name={cat.icon} className="h-4 w-4" style={{ color: cat.color }} />
       </div>
       <span className="flex-1 text-sm font-medium text-foreground">{cat.name}</span>
-      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
         <button
           onClick={() => onEdit(cat)}
           className="p-1.5 rounded-lg text-muted-foreground hover:text-money-green hover:bg-money-green/10 transition-colors"
@@ -343,12 +343,12 @@ export default function SettingsPage() {
 
             <div className="flex flex-col gap-2">
               <Label>Icon</Label>
-              <div className="grid grid-cols-9 gap-1 max-h-36 overflow-y-auto p-1">
+              <div className="grid grid-cols-7 gap-1 max-h-48 overflow-y-auto p-1">
                 {AVAILABLE_ICONS.map((icon) => (
                   <button
                     key={icon}
                     onClick={() => setForm((f) => ({ ...f, icon }))}
-                    className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all ${
+                    className={`flex items-center justify-center w-9 h-9 rounded-lg transition-all ${
                       form.icon === icon
                         ? "bg-money-green/20 text-money-green ring-1 ring-money-green"
                         : "text-muted-foreground hover:bg-white/10"

@@ -135,9 +135,9 @@ export function AddGoalModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-[#1a1a1a] border-money-green/10 text-money-light max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-md bg-card border-money-green/10 text-card-foreground max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-money-light">
+          <DialogTitle className="text-card-foreground">
             {isEditing ? "Edit Goal" : "New Savings Goal"}
           </DialogTitle>
         </DialogHeader>
@@ -166,7 +166,7 @@ export function AddGoalModal({
                             "flex flex-col items-center gap-1.5 p-3 rounded-xl text-xs transition-all border",
                             isSelected
                               ? "border-current"
-                              : "border-transparent text-muted-foreground hover:bg-white/5"
+                              : "border-transparent text-muted-foreground hover:bg-muted"
                           )}
                           style={
                             isSelected
@@ -209,7 +209,7 @@ export function AddGoalModal({
                       <Input
                         {...field}
                         placeholder="e.g. Emergency Fund"
-                        className="pl-9 bg-white/5 border-white/10 text-money-light focus-visible:ring-money-green"
+                        className="pl-9 bg-muted border-border text-card-foreground focus-visible:ring-money-green"
                       />
                     </div>
                   </FormControl>
@@ -238,7 +238,7 @@ export function AddGoalModal({
                         step="0.01"
                         min="0"
                         placeholder="0.00"
-                        className="pl-8 h-14 text-2xl font-bold bg-white/5 border-white/10 text-money-light placeholder:text-white/20 focus:border-money-green/50"
+                        className="pl-8 h-14 text-2xl font-bold bg-muted border-border text-card-foreground placeholder:text-muted-foreground/30 focus:border-money-green/50"
                       />
                     </div>
                   </FormControl>
@@ -268,7 +268,7 @@ export function AddGoalModal({
                           step="0.01"
                           min="0"
                           placeholder="0"
-                          className="pl-6 bg-white/5 border-white/10 text-money-light focus-visible:ring-money-green"
+                          className="pl-6 bg-muted border-border text-card-foreground focus-visible:ring-money-green"
                         />
                       </div>
                     </FormControl>
@@ -289,7 +289,7 @@ export function AddGoalModal({
                       <Input
                         {...field}
                         type="date"
-                        className="bg-white/5 border-white/10 text-money-light focus-visible:ring-money-green scheme-dark"
+                        className="bg-muted border-border text-card-foreground focus-visible:ring-money-green scheme-dark"
                       />
                     </FormControl>
                   </FormItem>
@@ -313,7 +313,7 @@ export function AddGoalModal({
                         type="button"
                         onClick={() => field.onChange(c)}
                         className={cn(
-                          "w-7 h-7 rounded-full transition-all ring-offset-2 ring-offset-[#1a1a1a]",
+                          "w-7 h-7 rounded-full transition-all ring-offset-2 ring-offset-card",
                           field.value === c && "ring-2 ring-white"
                         )}
                         style={{ backgroundColor: c }}

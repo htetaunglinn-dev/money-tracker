@@ -127,9 +127,9 @@ export function SetBudgetModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-[#1a1a1a] border-money-green/10 text-money-light max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-md bg-card border-money-green/10 text-card-foreground max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-money-light">
+          <DialogTitle className="text-card-foreground">
             {isEditing ? "Edit Budget" : "Set Budget"}
           </DialogTitle>
         </DialogHeader>
@@ -161,7 +161,7 @@ export function SetBudgetModal({
                           }}
                         >
                           <DynamicIcon name={cat.icon} className="h-4 w-4" />
-                          <span className="text-sm font-medium text-money-light">
+                          <span className="text-sm font-medium text-card-foreground">
                             {cat.name}
                           </span>
                         </div>
@@ -180,7 +180,7 @@ export function SetBudgetModal({
                               "flex flex-col items-center gap-1 p-2 rounded-xl text-xs transition-all border",
                               isSelected
                                 ? "border-current"
-                                : "border-transparent text-muted-foreground hover:bg-white/5"
+                                : "border-transparent text-muted-foreground hover:bg-muted"
                             )}
                             style={
                               isSelected
@@ -227,7 +227,7 @@ export function SetBudgetModal({
                         min="0"
                         placeholder="0.00"
                         inputMode="decimal"
-                        className="pl-7 text-2xl font-bold bg-white/5 border-white/10 text-money-light h-14 focus-visible:ring-money-green"
+                        className="pl-7 text-2xl font-bold bg-muted border-border text-card-foreground h-14 focus-visible:ring-money-green"
                       />
                     </div>
                   </FormControl>
@@ -255,7 +255,7 @@ export function SetBudgetModal({
                           "py-2 rounded-xl text-sm font-semibold transition-all",
                           field.value === opt.value
                             ? "bg-money-green text-money-black"
-                            : "bg-white/5 text-muted-foreground hover:bg-white/10"
+                            : "bg-muted text-muted-foreground hover:bg-muted/80"
                         )}
                       >
                         {opt.label}
@@ -271,9 +271,9 @@ export function SetBudgetModal({
               control={form.control}
               name="carryOver"
               render={({ field }) => (
-                <FormItem className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-3">
+                <FormItem className="flex items-center justify-between rounded-xl bg-muted px-4 py-3">
                   <div>
-                    <FormLabel className="text-sm font-medium text-money-light cursor-pointer">
+                    <FormLabel className="text-sm font-medium text-card-foreground cursor-pointer">
                       Carry Over
                     </FormLabel>
                     <p className="text-xs text-muted-foreground mt-0.5">
@@ -308,9 +308,9 @@ export function SetBudgetModal({
               control={form.control}
               name="isFixed"
               render={({ field }) => (
-                <FormItem className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-3">
+                <FormItem className="flex items-center justify-between rounded-xl bg-muted px-4 py-3">
                   <div>
-                    <FormLabel className="text-sm font-medium text-money-light cursor-pointer">
+                    <FormLabel className="text-sm font-medium text-card-foreground cursor-pointer">
                       Fixed Expense
                     </FormLabel>
                     <p className="text-xs text-muted-foreground mt-0.5">

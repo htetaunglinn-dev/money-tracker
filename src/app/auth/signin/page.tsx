@@ -83,12 +83,20 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 to-blue-50 p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex flex-col items-center justify-center hero-gradient p-4 gap-6">
+      {/* Brand logo above card */}
+      <div className="flex items-center gap-3">
+        <div className="relative">
+          <div className="absolute inset-0 bg-money-green blur-lg opacity-50 rounded-full" />
+          <Wallet className="relative h-8 w-8 text-money-green" />
+        </div>
+        <span className="text-2xl font-bold tracking-tight text-money-light">
+          Money<span className="text-money-green">Tracker</span>
+        </span>
+      </div>
+
+      <Card className="w-full max-w-md bg-money-dark border-money-green/10">
         <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <Wallet className="h-12 w-12 text-emerald-600" />
-          </div>
           <CardTitle className="text-2xl">Welcome Back</CardTitle>
           <CardDescription>
             Sign in to your Money Tracker account
@@ -109,7 +117,7 @@ export default function SignInPage() {
                 required
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <div className="relative">
@@ -139,9 +147,9 @@ export default function SignInPage() {
               </div>
             </div>
 
-            <Button 
-              type="submit" 
-              className="w-full"
+            <Button
+              type="submit"
+              className="w-full bg-money-green text-money-black hover:bg-money-green/90 font-semibold"
               disabled={isLoading}
             >
               {isLoading ? "Signing in..." : "Sign In"}
@@ -150,10 +158,10 @@ export default function SignInPage() {
 
           <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
+              <span className="w-full border-t border-money-green/10" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-muted-foreground">
+              <span className="bg-card px-2 text-muted-foreground">
                 Or continue with
               </span>
             </div>
@@ -162,7 +170,7 @@ export default function SignInPage() {
           <Button
             type="button"
             variant="outline"
-            className="w-full"
+            className="w-full border-money-green/20"
             onClick={handleGoogleSignIn}
             disabled={isLoading}
           >
@@ -189,7 +197,7 @@ export default function SignInPage() {
 
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
-            <Link href="/auth/signup" className="text-emerald-600 hover:underline">
+            <Link href="/auth/signup" className="text-money-green hover:underline">
               Sign up
             </Link>
           </div>

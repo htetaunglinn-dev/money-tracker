@@ -12,7 +12,7 @@ const DonutChart = dynamic(
   () => import("@/components/DonutChart").then((m) => ({ default: m.DonutChart })),
   {
     ssr: false,
-    loading: () => <div className="h-55 animate-pulse rounded-xl bg-white/5" />,
+    loading: () => <div className="h-55 animate-pulse rounded-xl bg-muted" />,
   }
 )
 
@@ -20,7 +20,7 @@ const TrendLineChart = dynamic(
   () => import("@/components/TrendLineChart").then((m) => ({ default: m.TrendLineChart })),
   {
     ssr: false,
-    loading: () => <div className="h-44 animate-pulse rounded-xl bg-white/5" />,
+    loading: () => <div className="h-44 animate-pulse rounded-xl bg-muted" />,
   }
 )
 
@@ -42,7 +42,7 @@ export default function ReportsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-money-light">Reports</h1>
+          <h1 className="text-xl font-bold text-foreground">Reports</h1>
           <p className="text-xs text-muted-foreground mt-0.5">{data.summary.label}</p>
         </div>
         {/* Period switcher */}
@@ -51,10 +51,10 @@ export default function ReportsPage() {
             <button
               key={p.value}
               onClick={() => setPeriod(p.value)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                 period === p.value
-                  ? "bg-money-green text-money-black"
-                  : "text-muted-foreground hover:text-money-light"
+                  ? "bg-money-green text-money-black scale-105"
+                  : "text-muted-foreground hover:text-foreground hover:scale-105 active:scale-95"
               }`}
             >
               {p.label}
@@ -107,7 +107,7 @@ export default function ReportsPage() {
       {data.nudges.length > 0 && (
         <GradientCard glowOpacity={0.15}>
           <div className="p-4 space-y-2">
-            <h2 className="text-sm font-semibold text-money-light flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <BarChart3 className="h-4 w-4 text-money-green" />
               Spending Insights
             </h2>
@@ -130,7 +130,7 @@ export default function ReportsPage() {
       {/* Donut chart — spending by category */}
       <GradientCard glowOpacity={0.15}>
         <div className="p-4">
-          <h2 className="text-sm font-semibold text-money-light mb-4">Spending by Category</h2>
+          <h2 className="text-sm font-semibold text-foreground mb-4">Spending by Category</h2>
           <DonutChart data={data.expensesByCategory} currency={currency} />
         </div>
       </GradientCard>
@@ -138,7 +138,7 @@ export default function ReportsPage() {
       {/* Trend line chart — 6 months */}
       <GradientCard glowOpacity={0.15}>
         <div className="p-4">
-          <h2 className="text-sm font-semibold text-money-light mb-3">
+          <h2 className="text-sm font-semibold text-foreground mb-3">
             Income vs Expense
             <span className="text-[10px] font-normal text-muted-foreground ml-1.5">(6 months)</span>
           </h2>
@@ -157,7 +157,7 @@ export default function ReportsPage() {
       {/* Calendar heatmap */}
       <GradientCard glowOpacity={0.15}>
         <div className="p-4">
-          <h2 className="text-sm font-semibold text-money-light mb-4">
+          <h2 className="text-sm font-semibold text-foreground mb-4">
             Daily Spending —{" "}
             {now.toLocaleString("default", { month: "long", year: "numeric" })}
           </h2>

@@ -97,12 +97,20 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 to-blue-50 p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex flex-col items-center justify-center hero-gradient p-4 gap-6">
+      {/* Brand logo above card */}
+      <div className="flex items-center gap-3">
+        <div className="relative">
+          <div className="absolute inset-0 bg-money-green blur-lg opacity-50 rounded-full" />
+          <Wallet className="relative h-8 w-8 text-money-green" />
+        </div>
+        <span className="text-2xl font-bold tracking-tight text-money-light">
+          Money<span className="text-money-green">Tracker</span>
+        </span>
+      </div>
+
+      <Card className="w-full max-w-md bg-money-dark border-money-green/10">
         <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <Wallet className="h-12 w-12 text-emerald-600" />
-          </div>
           <CardTitle className="text-2xl">Create Account</CardTitle>
           <CardDescription>
             Start tracking your money today
@@ -183,7 +191,7 @@ export default function SignUpPage() {
 
             <Button
               type="submit"
-              className="w-full"
+              className="w-full bg-money-green text-money-black hover:bg-money-green/90 font-semibold"
               disabled={isLoading}
             >
               {isLoading ? "Creating Account..." : "Create Account"}
@@ -192,7 +200,7 @@ export default function SignUpPage() {
 
           <div className="mt-4 text-center text-sm">
             Already have an account?{" "}
-            <Link href="/auth/signin" className="text-emerald-600 hover:underline">
+            <Link href="/auth/signin" className="text-money-green hover:underline">
               Sign in
             </Link>
           </div>

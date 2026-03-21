@@ -54,21 +54,21 @@ export function Navigation() {
         <div className="flex items-center gap-1">
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-full text-[#A0A0A0] hover:text-money-green transition-colors"
+            className="p-2 rounded-full text-muted-foreground hover:text-money-green transition-colors"
             aria-label="Toggle theme"
           >
             {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </button>
           <Link
             href="/dashboard/settings"
-            className="p-2 rounded-full text-[#A0A0A0] hover:text-money-green transition-colors"
+            className="p-2 rounded-full text-muted-foreground hover:text-money-green transition-colors"
             aria-label="Settings"
           >
             <Settings className="h-5 w-5" />
           </Link>
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
-            className="p-2 rounded-full text-[#A0A0A0] hover:text-money-green transition-colors"
+            className="p-2 rounded-full text-muted-foreground hover:text-money-green transition-colors"
             aria-label="Sign out"
           >
             <LogOut className="h-5 w-5" />
@@ -86,7 +86,7 @@ export function Navigation() {
               href={tab.href}
               className={cn(
                 "flex-1 flex flex-col items-center justify-center gap-1 py-2 relative transition-colors",
-                active ? "text-money-green" : "text-[#A0A0A0] hover:text-money-light"
+                active ? "text-money-green" : "text-muted-foreground hover:text-foreground"
               )}
             >
               {active && (
@@ -124,7 +124,7 @@ export function Navigation() {
                   "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
                   active
                     ? "bg-money-green/10 text-money-green shadow-[inset_0_0_0_1px_rgba(93,214,44,0.15)]"
-                    : "text-[#A0A0A0] hover:text-money-light hover:bg-white/5"
+                    : "text-muted-foreground hover:text-foreground hover:bg-white/5"
                 )}
               >
                 <link.icon className="h-5 w-5 shrink-0" />
@@ -149,20 +149,20 @@ export function Navigation() {
               <p className="text-sm font-medium text-money-light truncate">
                 {session?.user?.name}
               </p>
-              <p className="text-xs text-[#A0A0A0] truncate">
+              <p className="text-xs text-muted-foreground truncate">
                 {session?.user?.email}
               </p>
             </div>
             <button
               onClick={toggleTheme}
-              className="p-1.5 rounded-lg text-[#A0A0A0] hover:text-money-green hover:bg-money-green/10 transition-colors"
+              className="p-1.5 rounded-lg text-muted-foreground hover:text-money-green hover:bg-money-green/10 transition-colors"
               aria-label="Toggle theme"
             >
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="p-1.5 rounded-lg text-[#A0A0A0] hover:text-money-green hover:bg-money-green/10 transition-colors"
+              className="p-1.5 rounded-lg text-muted-foreground hover:text-money-green hover:bg-money-green/10 transition-colors"
               aria-label="Sign out"
             >
               <LogOut className="h-4 w-4" />

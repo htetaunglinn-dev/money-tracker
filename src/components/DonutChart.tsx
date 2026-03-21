@@ -82,7 +82,7 @@ export function DonutChart({ data, currency = "$" }: DonutChartProps) {
               />
               <span className="text-xs text-muted-foreground truncate">{entry.name}</span>
             </div>
-            <span className="text-xs font-medium text-money-light shrink-0">
+            <span className="text-xs font-medium text-foreground shrink-0">
               {currency}
               {entry.total.toLocaleString(undefined, { maximumFractionDigits: 0 })}
             </span>

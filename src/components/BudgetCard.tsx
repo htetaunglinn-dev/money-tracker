@@ -57,7 +57,7 @@ export function BudgetCard({ budget, spent, onEdit, onDelete }: BudgetCardProps)
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
-              <p className="text-sm font-semibold text-money-light truncate">
+              <p className="text-sm font-semibold text-foreground truncate">
                 {budget.categoryName}
               </p>
               {budget.isFixed && (
@@ -73,7 +73,7 @@ export function BudgetCard({ budget, spent, onEdit, onDelete }: BudgetCardProps)
         <div className="flex items-center gap-1 shrink-0">
           <button
             onClick={() => onEdit(budget)}
-            className="p-1.5 rounded-lg text-muted-foreground hover:text-money-light hover:bg-white/10 transition-colors"
+            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/10 transition-colors"
             aria-label="Edit budget"
           >
             <Pencil className="h-3.5 w-3.5" />
@@ -90,7 +90,7 @@ export function BudgetCard({ budget, spent, onEdit, onDelete }: BudgetCardProps)
 
       {/* Progress bar */}
       <div className="mt-3 space-y-1.5">
-        <div className={cn("w-full h-2 rounded-full", getProgressBg(ratio))}>
+        <div className={cn("w-full h-2 rounded-full transition-colors duration-500", getProgressBg(ratio))}>
           <div
             className="h-full rounded-full transition-all duration-500"
             style={{ width: `${pct}%`, backgroundColor: color }}
